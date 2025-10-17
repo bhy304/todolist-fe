@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import styles from '../auth.module.css';
 import { useNavigate } from 'react-router';
-import { usersAPI } from '../../../api/endpoints/users';
+import { usersAPI } from '../../../api/users';
 
 const JoinPage = () => {
   const navigate = useNavigate();
@@ -40,8 +40,10 @@ const JoinPage = () => {
     setForm(prev => {
       const newForm = { ...prev, [name]: value };
 
-      if (name === 'password' || name === 'passwordConfirm') {
+      if (name === 'password' && name === 'passwordConfirm') {
         setPasswordError(newForm.password !== newForm.passwordConfirm);
+      } else {
+        setPasswordError(false);
       }
 
       return newForm;

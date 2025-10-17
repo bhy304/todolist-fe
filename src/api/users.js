@@ -1,4 +1,4 @@
-import axiosInstance from '../axios';
+import axiosInstance from '../utils/axios';
 
 export const usersAPI = {
   login: async ({ username, password }) => {
@@ -9,6 +9,7 @@ export const usersAPI = {
       });
 
       console.log('로그인 성공: ', response);
+      return response;
     } catch (error) {
       console.error('로그인 실패: ', error);
       throw error;

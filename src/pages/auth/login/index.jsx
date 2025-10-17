@@ -11,7 +11,6 @@ const LoginPage = () => {
           id="username"
           name="username"
           required
-          autoComplete="username"
           placeholder="아이디를 입력해주세요."
         />
         <input
@@ -19,7 +18,6 @@ const LoginPage = () => {
           id="password"
           name="password"
           required
-          autoComplete="username"
           placeholder="비밀번호를 입력해주세요."
         />
         <span className={styles.error}></span>
