@@ -26,24 +26,29 @@ const Common = () => {
       <p>이 페이지는 공통 컴포넌트를 테스트하기 위한 페이지입니다.</p>
 
       <div className="common">
-        <Button type="PRIMARY" onClick={handleClick}>
+        <Button variant="PRIMARY" onClick={handleClick}>
           등록하기
         </Button>
-        <Button type="PRIMARY_DISABLED">등록하기</Button>
-        <Button type="GHOST">수정</Button>
-        <Button type="SECONDARY">수정</Button>
-        <Button type="OUTLINE_DANGER">삭제</Button>
-        <Button type="DANGER">삭제</Button>
+        <Button variant="PRIMARY_DISABLED">등록하기</Button>
+        <Button variant="GHOST">수정</Button>
+        <Button variant="SECONDARY">수정</Button>
+        <Button variant="OUTLINE_DANGER">삭제</Button>
+        <Button variant="DANGER">삭제</Button>
+      </div>
+      <div className="common">
+        <Button variant="PRIMARY" size="FULL">
+          FULL SIZE
+        </Button>
       </div>
 
       <div className="common textfield-group">
         <Textfield
-          type="DEFAULT"
+          variant="DEFAULT"
           placeholder="할 일을 입력해주세요."
           onChange={handleChange}
         />
-        <Textfield type="FOCUS" placeholder="데브코스 강의 수강하기" />
-        <Textfield type="ERROR" placeholder="데브코스 강의 수강하기" />
+        <Textfield variant="FOCUS" placeholder="데브코스 강의 수강하기" />
+        <Textfield variant="ERROR" placeholder="데브코스 강의 수강하기" />
       </div>
 
       <div className="common checkfield-group">

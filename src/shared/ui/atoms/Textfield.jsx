@@ -1,20 +1,30 @@
 import './Textfield.css';
 import { getClassName } from '../../utils/classNames';
 
-const TextfieldType = {
+const TEXTFIELD_VARIANTS = {
   DEFAULT: 'default',
   FOCUS: 'focus',
   ERROR: 'error',
 };
 
-const Textfield = ({ children, id, name, type, onChange, placeholder }) => {
-  const className = getClassName('input', type, TextfieldType);
+const Textfield = ({
+  children,
+  id,
+  name,
+  type = 'text',
+  variant = 'DEFAULT',
+  value,
+  onChange,
+  placeholder,
+}) => {
+  const className = getClassName('input', variant, TEXTFIELD_VARIANTS);
 
   return (
     <input
-      type="text"
+      type={type}
       id={id}
       name={name}
+      value={value}
       placeholder={placeholder}
       className={className}
       onChange={onChange}

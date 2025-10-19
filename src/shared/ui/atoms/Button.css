@@ -4,6 +4,7 @@
   min-height: 40px;
   font-size: 16px;
   font-weight: 400;
+  width: fit-content;
 }
 
 .primary {
@@ -36,4 +37,8 @@
 .danger {
   background-color: #ef4444;
   color: #fff;
+}
+
+.full {
+  width: 100%;
 }

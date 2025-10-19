@@ -1,18 +1,37 @@
 /**
  * 기본 클래스명과 타입별 클래스명을 조합하여 반환합니다.
  * @param {string} baseClassName - 기본 클래스명 (예: 'button', 'input')
- * @param {string} type - 타입 문자열 (예: 'primary', 'focus')
- * @param {Object} typeMap - 타입 매핑 객체 (예: ButtonType, TextfieldType)
+ * @param {string|string[]} values - 단일 값 또는 값 배열
+ * @param {Object|Object[]} maps - 단일 매핑 객체 또는 매핑 객체 배열
  * @returns {string} 조합된 클래스명 문자열
+ * @example
+ * // 단일 값 사용
+ * getClassName('input', 'ERROR', TEXTFIELD_VARIANTS) // 'input error'
+ * 
+ * // 여러 값 사용
+ * getClassName('button', ['PRIMARY', 'FULL'], [BUTTON_VARIANTS, BUTTON_SIZE]) // 'button primary full'
  */
-export const getClassName = (baseClassName, type, typeMap) => {
+export const getClassName = (baseClassName, values, maps) => {
   const classNames = [baseClassName];
 
-  if (type && typeMap[type]) {
-    classNames.push(typeMap[type]);
+  // 값이 없으면 baseClassName만 반환
+  if (!values || !maps) {
+    return baseClassName;
   }
 
-  return classNames.join(' ');
+  // 단일 값인 경우 배열로 변환
+  const valueArray = Array.isArray(values) ? values : [values];
+  const mapArray = Array.isArray(maps) ? maps : [maps];
+
+  // 각 값에 대해 매핑된 클래스명 추가
+  valueArray.forEach((value, index) => {
+    const map = mapArray[index];
+    if (value && map && map[value]) {
+      classNames.push(map[value]);
+    }
+  });
+
+  return classNames.filter(Boolean).join(' ');
 };
 
 /**

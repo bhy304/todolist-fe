@@ -1,7 +1,7 @@
 import './Button.css';
 import { getClassName } from '../../utils/classNames';
 
-const ButtonType = {
+const BUTTON_VARIANTS = {
   PRIMARY: 'primary',
   PRIMARY_DISABLED: 'primary-disabled',
   GHOST: 'ghost',
@@ -10,11 +10,22 @@ const ButtonType = {
   DANGER: 'danger',
 };
 
-const Button = ({ children, type, onClick }) => {
-  const className = getClassName('button', type, ButtonType);
+const BUTTON_SIZE = {
+  SMALL: 'small',
+  MEDIUM: 'medium',
+  LARGE: 'large',
+  FULL: 'full',
+};
+
+const Button = ({ children, type, variant, size, onClick }) => {
+  const className = getClassName(
+    'button',
+    [variant, size],
+    [BUTTON_VARIANTS, BUTTON_SIZE]
+  );
 
   return (
-    <button className={className} onClick={onClick}>
+    <button type={type} className={className} onClick={onClick}>
       {children}
     </button>
   );
