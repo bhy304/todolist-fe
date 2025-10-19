@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { Cookies } from 'react-cookie';
+import { Cookies } from 'universal-cookie';
 
 const BASE_URL = process.env.REACT_APP_BASE_URL;
 const cookies = new Cookies();
