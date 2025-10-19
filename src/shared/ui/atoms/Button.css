@@ -1,0 +1,39 @@
+.button {
+  padding: 8px 16px;
+  border-radius: 4px;
+  min-height: 40px;
+  font-size: 16px;
+  font-weight: 400;
+}
+
+.primary {
+  background-color: #0f172a;
+  color: #fff;
+  font-weight: 500;
+}
+
+.primary-disabled {
+  background-color: #0f172acc;
+  color: #fff;
+  font-weight: 500;
+}
+
+.ghost {
+  border: 1px solid #94a3b8;
+  color: #0f172a;
+}
+
+.secondary {
+  background-color: #94a3b8;
+  color: #fff;
+}
+
+.outline-danger {
+  border: 1px solid #ef4444;
+  color: #ef4444;
+}
+
+.danger {
+  background-color: #ef4444;
+  color: #fff;
+}
