@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link, useNavigate } from 'react-router';
+import { Link, useNavigate } from 'react-router-dom';
 import styles from '../auth.module.css';
 import { usersAPI } from '../../../api/users';
 
@@ -38,7 +38,7 @@ const LoginPage = () => {
 
       console.log('로그인 성공: ', result);
 
-      // navigate('/todos');
+      navigate('/todo');
     } catch (error) {
       console.error('로그인 실패: ', error);
 
@@ -61,7 +61,6 @@ const LoginPage = () => {
           type="text"
           id="username"
           name="username"
-          // required
           value={form.username}
           onChange={handleChange}
           className={validationError ? styles.error : ''}
@@ -71,7 +70,6 @@ const LoginPage = () => {
           type="password"
           id="password"
           name="password"
-          // required
           value={form.password}
           onChange={handleChange}
           className={validationError ? styles.error : ''}
