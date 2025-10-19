@@ -78,7 +78,6 @@ const JoinPage = () => {
           name="passwordConfirm"
           value={form.passwordConfirm}
           onChange={handleChange}
-          required
           placeholder="비밀번호를 다시 입력해주세요."
         />
         {passwordError && (

@@ -28,9 +28,7 @@ const Textfield = ({
       placeholder={placeholder}
       className={className}
       onChange={onChange}
-    >
-      {children}
-    </input>
+    />
   );
 };
 export default Textfield;
