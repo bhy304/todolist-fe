@@ -3,6 +3,9 @@ import { useNavigate } from 'react-router-dom';
 import styles from '../auth.module.css';
 import { usersAPI } from '../../../api/users';
 
+import Textfield from '../../../shared/ui/atoms/Textfield';
+import Button from '../../../shared/ui/atoms/Button';
+
 const JoinPage = () => {
   const navigate = useNavigate();
   const [form, setForm] = useState({
@@ -54,41 +57,39 @@ const JoinPage = () => {
     <main>
       <form className={styles.authForm} onSubmit={handleSubmit}>
         <h1>회원가입</h1>
-        <input
-          type="text"
+        <Textfield
           id="username"
           name="username"
           value={form.username}
           onChange={handleChange}
-          required
           placeholder="아이디를 입력해주세요."
         />
-        <input
+        <Textfield
           type="password"
           id="password"
           name="password"
           value={form.password}
           onChange={handleChange}
-          className={passwordError ? styles.error : ''}
-          required
           placeholder="비밀번호를 입력해주세요."
+          variant={passwordError ? 'ERROR' : 'DEFAULT'}
         />
-        <input
+        <Textfield
           type="password"
           id="passwordConfirm"
           name="passwordConfirm"
           value={form.passwordConfirm}
           onChange={handleChange}
-          className={passwordError ? styles.error : ''}
-          required
           placeholder="비밀번호를 다시 입력해주세요."
+          variant={passwordError ? 'ERROR' : 'DEFAULT'}
         />
         {passwordError && (
           <span className={styles.errorMessage}>
             비밀번호가 일치하지 않습니다.
           </span>
         )}
-        <button type="submit">회원가입</button>
+        <Button type="submit" variant="PRIMARY" size="FULL">
+          회원가입
+        </Button>
       </form>
     </main>
   );

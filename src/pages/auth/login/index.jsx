@@ -3,6 +3,9 @@ import { Link, useNavigate } from 'react-router-dom';
 import styles from '../auth.module.css';
 import { usersAPI } from '../../../api/users';
 
+import Button from '../../../shared/ui/atoms/Button';
+import Textfield from '../../../shared/ui/atoms/Textfield';
+
 const LoginPage = () => {
   const navigate = useNavigate();
   const [form, setForm] = useState({
@@ -54,31 +57,32 @@ const LoginPage = () => {
   };
 
   return (
-    <main>
+    <main className={styles.login}>
       <form className={styles.authForm} onSubmit={handleSubmit}>
         <h1>로그인</h1>
-        <input
-          type="text"
+        <Textfield
           id="username"
           name="username"
           value={form.username}
           onChange={handleChange}
-          className={validationError ? styles.error : ''}
+          variant={validationError ? 'ERROR' : 'DEFAULT'}
           placeholder="아이디를 입력해주세요."
         />
-        <input
+        <Textfield
           type="password"
           id="password"
           name="password"
           value={form.password}
           onChange={handleChange}
-          className={validationError ? styles.error : ''}
+          variant={validationError ? 'ERROR' : 'DEFAULT'}
           placeholder="비밀번호를 입력해주세요."
         />
         {errorMessage && (
           <span className={styles.errorMessage}>{errorMessage}</span>
         )}
-        <button type="submit">로그인</button>
+        <Button type="submit" variant="PRIMARY" size="FULL">
+          로그인
+        </Button>
       </form>
       <Link to="/join" className={styles.join}>
         회원가입
@@ -88,10 +92,3 @@ const LoginPage = () => {
 };
 
 export default LoginPage;
-
-/* 
-1. 로그인, 회원가입 유효성 검사 
-2. 로그인 성공시 Todos 페이지로 이동
-3. 로그인시 토큰 로컬 스토리지에 저장
-4. 토큰이 
-*/
