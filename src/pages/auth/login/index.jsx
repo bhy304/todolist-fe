@@ -65,6 +65,7 @@ const LoginPage = () => {
           name="username"
           value={form.username}
           onChange={handleChange}
+          variant={validationError ? 'ERROR' : 'DEFAULT'}
           placeholder="아이디를 입력해주세요."
         />
         <Textfield
@@ -73,6 +74,7 @@ const LoginPage = () => {
           name="password"
           value={form.password}
           onChange={handleChange}
+          variant={validationError ? 'ERROR' : 'DEFAULT'}
           placeholder="비밀번호를 입력해주세요."
         />
         {errorMessage && (

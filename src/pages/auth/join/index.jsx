@@ -71,6 +71,7 @@ const JoinPage = () => {
           value={form.password}
           onChange={handleChange}
           placeholder="비밀번호를 입력해주세요."
+          variant={passwordError ? 'ERROR' : 'DEFAULT'}
         />
         <Textfield
           type="password"
@@ -79,6 +80,7 @@ const JoinPage = () => {
           value={form.passwordConfirm}
           onChange={handleChange}
           placeholder="비밀번호를 다시 입력해주세요."
+          variant={passwordError ? 'ERROR' : 'DEFAULT'}
         />
         {passwordError && (
           <span className={styles.errorMessage}>
