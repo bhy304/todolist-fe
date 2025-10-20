@@ -8,7 +8,6 @@ const TEXTFIELD_VARIANTS = {
 };
 
 const Textfield = ({
-  children,
   id,
   name,
   type = 'text',
