@@ -1,0 +1,47 @@
+main.login {
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  font-size: 16px;
+}
+
+.authForm {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: 360px;
+  margin-bottom: 8px;
+  gap: 8px;
+}
+
+h1 {
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 20px;
+  color: #1e293b;
+}
+
+.join {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 360px;
+  max-height: 40px;
+  border-radius: 4px;
+  padding: 8px 16px;
+  color: #0f172a;
+  border: 1px solid #94a3b8;
+}
+
+.errorMessage {
+  color: #ef4444;
+  text-align: left;
+  margin-bottom: 8px;
+  width: 100%;
+  font-size: 14px;
+  font-weight: 500;
+}
