@@ -1,4 +1,4 @@
-main {
+main.login {
   width: 100%;
   height: 100vh;
   display: flex;
@@ -12,8 +12,10 @@ main {
   display: flex;
   flex-direction: column;
   align-items: center;
-  width: 360px;
+  width: 100%;
+  max-width: 360px;
   margin-bottom: 8px;
+  gap: 8px;
 }
 
 h1 {
@@ -21,37 +23,6 @@ h1 {
   font-weight: 700;
   margin-bottom: 20px;
   color: #1e293b;
-}
-
-input {
-  border: 1px solid #d4d4d8;
-  border-radius: 4px;
-  padding: 8px 16px;
-  width: 100%;
-  margin-bottom: 8px;
-  line-height: 1.5;
-}
-
-input:focus {
-  outline: none;
-}
-
-input.error {
-  border: 1px solid #ef4444;
-}
-
-input::placeholder {
-  color: #6b7280;
-}
-
-button {
-  padding: 8px 16px;
-  width: 100%;
-  min-height: 40px;
-  border-radius: 4px;
-  background: #0f172a;
-  color: #ffffff;
-  font-size: 16px;
 }
 
 .join {
