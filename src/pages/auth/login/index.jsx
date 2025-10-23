@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useForm } from 'react-hook-form';
 import { Link, useNavigate } from 'react-router-dom';
 import Cookies from 'universal-cookie';
 import styles from '../auth.module.css';
@@ -11,33 +11,17 @@ const cookies = new Cookies();
 
 const LoginPage = () => {
   const navigate = useNavigate();
-  const [form, setForm] = useState({
-    username: '',
-    password: '',
+  const {
+    register,
+    handleSubmit,
+    setError,
+    formState: { errors },
+  } = useForm({
+    mode: 'onSubmit',
   });
-  const [validationError, setValidationError] = useState(false);
-  const [errorMessage, setErrorMessage] = useState('');
 
-  const handleChange = e => {
-    const { name, value } = e.target;
-    setForm(prev => {
-      return { ...prev, [name]: value };
-    });
-    // 입력 시 에러 메시지 초기화
-    setValidationError(false);
-    setErrorMessage('');
-  };
-
-  const handleSubmit = async e => {
-    e.preventDefault();
-
-    const { username, password } = form;
-
-    if (!username || !password) {
-      setValidationError(true);
-      setErrorMessage('아이디와 비밀번호를 입력해주세요.');
-      return;
-    }
+  const onSubmit = async formData => {
+    const { username, password } = formData;
 
     try {
       const response = await usersAPI.login({ username, password });
@@ -46,7 +30,6 @@ const LoginPage = () => {
 
       if (response.data.success) {
         const { token, user } = response.data;
-        console.log(token, user);
 
         // Cookie에 토큰 저장
         cookies.set('token', token, {
@@ -62,37 +45,54 @@ const LoginPage = () => {
     } catch (error) {
       console.error('로그인 실패: ', error);
 
-      // 401 에러 처리
+      // 401 에러 처리 - react-hook-form 에러로 추가
       if (error.response?.data.errorCode === 'INVALID_CREDENTIALS') {
-        setValidationError(true);
-        setErrorMessage('아이디 또는 비밀번호가 일치하지 않습니다.');
+        setError('root.serverError', {
+          type: 'manual',
+          message: '아이디와 비밀번호를 확인해주세요.',
+        });
+      } else {
+        setError('root.serverError', {
+          type: 'manual',
+          message: '로그인 중 오류가 발생했습니다. 다시 시도해주세요.',
+        });
       }
     }
   };
 
   return (
     <main className={styles.login}>
-      <form className={styles.authForm} onSubmit={handleSubmit}>
+      <form className={styles.authForm} onSubmit={handleSubmit(onSubmit)}>
         <h1>로그인</h1>
         <Textfield
           id="username"
           name="username"
-          value={form.username}
-          onChange={handleChange}
-          variant={validationError ? 'ERROR' : 'DEFAULT'}
           placeholder="아이디를 입력해주세요."
+          variant={
+            errors.username || errors.root?.serverError ? 'ERROR' : 'DEFAULT'
+          }
+          {...register('username', {
+            required: '아이디를 입력해주세요.',
+          })}
         />
         <Textfield
           type="password"
           id="password"
           name="password"
-          value={form.password}
-          onChange={handleChange}
-          variant={validationError ? 'ERROR' : 'DEFAULT'}
           placeholder="비밀번호를 입력해주세요."
+          variant={
+            errors.password || errors.root?.serverError ? 'ERROR' : 'DEFAULT'
+          }
+          {...register('password', {
+            required: '비밀번호를 입력해주세요.',
+          })}
         />
-        {errorMessage && (
-          <span className={styles.errorMessage}>{errorMessage}</span>
+        {(errors.username || errors.password || errors.root?.serverError) && (
+          <span className={styles.errorMessage}>
+            {errors.root?.serverError?.message ||
+              errors.username?.message ||
+              errors.password?.message}
+          </span>
         )}
         <Button type="submit" variant="PRIMARY" size="FULL">
           로그인
