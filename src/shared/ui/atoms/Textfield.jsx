@@ -21,6 +21,7 @@ const Textfield = ({
 
   return (
     <input
+      {...rest} // register의 ref, onBlur, onChange 등을 먼저 전달
       type={type}
       id={id}
       name={name}
@@ -28,7 +29,6 @@ const Textfield = ({
       placeholder={placeholder}
       className={className}
       onChange={onChange}
-      {...rest} // register의 ref, onBlur 등을 자동으로 전달
     />
   );
 };
