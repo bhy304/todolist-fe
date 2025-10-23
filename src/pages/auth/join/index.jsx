@@ -12,6 +12,7 @@ const JoinPage = () => {
     register,
     handleSubmit,
     watch,
+    setError,
     formState: { errors },
   } = useForm({
     mode: 'onChange', // 실시간 검증
@@ -31,6 +32,13 @@ const JoinPage = () => {
       navigate('/');
     } catch (error) {
       console.error('회원가입 실패:', error);
+
+      if (error.response?.data.errorCode === 'DUPLICATE_USERNAME') {
+        setError('username', {
+          type: 'manual',
+          message: '이미 사용 중인 아이디입니다.',
+        });
+      }
     }
   };
 

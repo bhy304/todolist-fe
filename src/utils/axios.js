@@ -66,6 +66,8 @@ axiosInstance.interceptors.response.use(
       case 404:
         alert('요청하신 리소스를 찾을 수 없습니다.');
         break;
+      case 409:
+        return Promise.reject(error);
       case 500:
         alert('서버 오류가 발생했습니다. 잠시 후 다시 시도해주세요.');
         break;
