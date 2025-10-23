@@ -17,8 +17,6 @@ const JoinPage = () => {
     mode: 'onChange', // 실시간 검증
   });
 
-  console.log(errors);
-
   const password = watch('password'); // 비밀번호 필드 감시
 
   const onSubmit = async formData => {

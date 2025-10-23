@@ -41,7 +41,7 @@ axiosInstance.interceptors.response.use(
     console.error('응답 인터셉터 에러:', error.response?.status, error.message);
 
     if (!error.response) {
-      alert('네크워크 오류가 발생했습니다. 다시 시도해주세요.');
+      alert('네트워크 오류가 발생했습니다. 다시 시도해주세요.');
       return Promise.reject(error);
     }
 
@@ -55,7 +55,7 @@ axiosInstance.interceptors.response.use(
         } else if (errorCode === 'TOKEN_MISSING') {
           alert('인증 토큰이 필요합니다.');
         } else if (errorCode === 'TOKEN_INVALID') {
-          alert('유효하지 않은 토큰입니다. ');
+          alert('유효하지 않은 토큰입니다.');
         } else if (errorCode === 'INVALID_CREDENTIALS') {
           return Promise.reject(error);
         }
