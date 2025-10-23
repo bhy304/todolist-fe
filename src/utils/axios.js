@@ -46,17 +46,27 @@ axiosInstance.interceptors.response.use(
     }
 
     const { status, data } = error.response;
-    const errorCode = data?.code;
+    const errorCode = data?.errorCode; // code -> errorCode로 통일
 
     switch (status) {
       case 401:
         if (errorCode === 'TOKEN_EXPIRED') {
           alert('세션이 만료되었습니다. 다시 로그인해주세요.');
+          cookies.remove('token', { path: '/' });
+          localStorage.removeItem('user');
+          window.location.href = '/';
         } else if (errorCode === 'TOKEN_MISSING') {
           alert('인증 토큰이 필요합니다.');
+          cookies.remove('token', { path: '/' });
+          localStorage.removeItem('user');
+          window.location.href = '/';
         } else if (errorCode === 'TOKEN_INVALID') {
           alert('유효하지 않은 토큰입니다.');
+          cookies.remove('token', { path: '/' });
+          localStorage.removeItem('user');
+          window.location.href = '/';
         } else if (errorCode === 'INVALID_CREDENTIALS') {
+          // 로그인 페이지에서 처리
           return Promise.reject(error);
         }
         break;
@@ -67,6 +77,7 @@ axiosInstance.interceptors.response.use(
         alert('요청하신 리소스를 찾을 수 없습니다.');
         break;
       case 409:
+        // 중복 에러는 각 페이지에서 처리
         return Promise.reject(error);
       case 500:
         alert('서버 오류가 발생했습니다. 잠시 후 다시 시도해주세요.');

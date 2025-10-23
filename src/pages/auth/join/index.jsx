@@ -11,14 +11,12 @@ const JoinPage = () => {
   const {
     register,
     handleSubmit,
-    watch,
+    getValues,
     setError,
     formState: { errors },
   } = useForm({
     mode: 'onChange', // 실시간 검증
   });
-
-  const password = watch('password'); // 비밀번호 필드 감시
 
   const onSubmit = async formData => {
     const { username, password } = formData;
@@ -96,7 +94,8 @@ const JoinPage = () => {
           {...register('passwordConfirm', {
             required: '비밀번호를 다시 입력해주세요.',
             validate: value =>
-              value === password || '비밀번호가 일치하지 않습니다.',
+              value === getValues('password') ||
+              '비밀번호가 일치하지 않습니다.',
           })}
         />
         {(errors.username || errors.password || errors.passwordConfirm) && (

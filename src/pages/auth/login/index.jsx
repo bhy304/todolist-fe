@@ -37,7 +37,7 @@ const LoginPage = () => {
           // maxAge: 3600, // 1시간
         });
 
-        // 사용자 정보는 localStorage에 저장 (선택사항)
+        // 사용자 정보는 localStorage에 저장
         localStorage.setItem('user', JSON.stringify(user));
 
         navigate('/todo');
@@ -45,7 +45,7 @@ const LoginPage = () => {
     } catch (error) {
       console.error('로그인 실패: ', error);
 
-      // 401 에러 처리 - react-hook-form 에러로 추가
+      // 401 에러 처리 react-hook-form 에러로 추가
       if (error.response?.data.errorCode === 'INVALID_CREDENTIALS') {
         setError('root.serverError', {
           type: 'manual',
