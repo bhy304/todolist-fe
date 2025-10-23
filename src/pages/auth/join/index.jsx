@@ -59,7 +59,6 @@ const JoinPage = () => {
             },
           })}
         />
-
         <Textfield
           type="password"
           id="password"
@@ -76,7 +75,7 @@ const JoinPage = () => {
               message: '비밀번호는 20자 이내여야 합니다.',
             },
             pattern: {
-              value: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#])/,
+              value: /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#]).+$/,
               message: '비밀번호는 대소문자, 숫자, 특수문자를 포함해야 합니다.',
             },
           })}
