@@ -28,11 +28,10 @@ export const todosAPI = {
     }
   },
   // 할 일 수정
-  updateTodo: async (id, { content, isDone }) => {
+  updateTodo: async (id, { content }) => {
     try {
       const response = await axiosInstance.put(`/todos/${id}`, {
         content,
-        isDone,
       });
 
       console.log('할 일 수정 성공:', response);
