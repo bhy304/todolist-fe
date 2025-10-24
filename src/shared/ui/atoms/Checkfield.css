@@ -1,0 +1,34 @@
+.checkfield {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  user-select: none;
+}
+
+.checkfield input {
+  margin: 0;
+}
+
+.checkfield input[type='checkbox'] {
+  width: 18px;
+  height: 18px;
+  accent-color: #475569;
+  border: 2px solid #475569;
+  box-sizing: border-box;
+  background-clip: content-box;
+  padding: 6px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.checkfield input[type='checkbox']:checked + label {
+  color: #475569;
+}
+
+.checkfield label {
+  color: #0f172a;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 1.5;
+  cursor: pointer;
+}

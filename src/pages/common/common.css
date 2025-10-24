@@ -1,0 +1,31 @@
+main {
+  width: 100%;
+  max-width: 800px;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  font-size: 16px;
+  margin: 0 auto;
+}
+
+h1 {
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 20px;
+  color: #1e293b;
+}
+
+.common {
+  display: flex;
+  justify-content: center;
+  gap: 24px;
+  margin: 20px;
+  width: 100%;
+}
+
+.textfield-group,
+.checkfield-group {
+  flex-direction: column;
+}
