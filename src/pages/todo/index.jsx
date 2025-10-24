@@ -2,6 +2,9 @@ import { useState, useEffect } from 'react';
 import { todosAPI } from '../../api/todos';
 import styles from './todos.module.css';
 
+import Button from '../../shared/ui/atoms/Button';
+import Textfield from '../../shared/ui/atoms/Textfield';
+
 export default function Todo() {
   const [todoList, setTodoList] = useState([]);
   const [inputContent, setInputContent] = useState('');
@@ -31,26 +34,19 @@ export default function Todo() {
   };
 
   // 할일 추가 (DB에 저장)
-  const addTodo = async (e) => {
+  const addTodo = async e => {
     e.preventDefault();
     if (!inputContent.trim()) return;
 
     try {
       // DB에 저장
       const response = await todosAPI.createTodo({
-        title: inputContent,
         content: inputContent,
       });
 
-      console.log('DB에 할 일 추가 완료:', response.data);
+      console.log('DB에 할 일 추가 완료:', response);
 
-      const newTodo = {
-        id: response.data.id,
-        content: response.data.title || response.data.content,
-        isDone: response.data.completed || false,
-      };
-
-      setTodoList([...todoList, newTodo]);
+      setTodoList([...todoList, response.data.todo]);
       setInputContent('');
       setError('');
     } catch (error) {
@@ -60,7 +56,7 @@ export default function Todo() {
   };
 
   // 완료 체크 (DB 업데이트)
-  const completeTodo = async (id) => {
+  const completeTodo = async id => {
     try {
       // DB에서 상태 토글
       const response = await todosAPI.toggleTodo(id);
@@ -69,8 +65,14 @@ export default function Todo() {
 
       setTodoList(
         todoList.map(todo =>
-          todo.id === id 
-            ? { ...todo, isDone: response.data.completed !== undefined ? response.data.completed : !todo.isDone } 
+          todo.id === id
+            ? {
+                ...todo,
+                isDone:
+                  response.data.completed !== undefined
+                    ? response.data.completed
+                    : !todo.isDone,
+              }
             : todo
         )
       );
@@ -81,7 +83,7 @@ export default function Todo() {
   };
 
   // 수정 시작
-  const startEdit = (todo) => {
+  const startEdit = todo => {
     setEditingId(todo.id);
     setEditContent(todo.content);
   };
@@ -92,21 +94,18 @@ export default function Todo() {
 
     try {
       const todo = todoList.find(t => t.id === editingId);
-      
+
       // DB에서 업데이트
       const response = await todosAPI.updateTodo(editingId, {
-        title: editContent,
         content: editContent,
-        completed: todo.isDone,
+        isDone: todo.isDone,
       });
 
       console.log('DB에서 할 일 수정 완료:', response.data);
 
       setTodoList(
         todoList.map(todo =>
-          todo.id === editingId 
-            ? { ...todo, content: editContent } 
-            : todo
+          todo.id === editingId ? { ...todo, content: editContent } : todo
         )
       );
       setEditingId(null);
@@ -125,7 +124,7 @@ export default function Todo() {
   };
 
   // 삭제 (DB에서 삭제)
-  const deleteTodo = async (id) => {
+  const deleteTodo = async id => {
     if (!window.confirm('정말 삭제하시겠습니까?')) {
       return;
     }
@@ -146,7 +145,7 @@ export default function Todo() {
 
   // 미완료 할일
   const activeTodos = todoList.filter(todo => !todo.isDone);
-  
+
   // 완료된 할일
   const completedTodos = todoList.filter(todo => todo.isDone);
 
@@ -164,18 +163,40 @@ export default function Todo() {
         <h1>할 일 목록</h1>
       </aside>
 
-      <div style={{flex: 1, display: 'flex', flexDirection: 'column', gap: '20px'}}>
+      <div
+        style={{
+          flex: 1,
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '20px',
+        }}
+      >
         {error && <div className={styles.errorMessage}>{error}</div>}
-        
-        <form onSubmit={addTodo} className={styles.inputForm}>
-          <input
-            type="text"
+
+        <div>
+          <Textfield
+            id="input_content"
+            name="input_content"
             value={inputContent}
-            onChange={(e) => setInputContent(e.target.value)}
+            onChange={e => setInputContent(e.target.value)}
             placeholder="할 일을 입력해주세요."
           />
-          <button type="submit">등록하기</button>
-        </form>
+          <Button variant="PRIMARY" onClick={addTodo}>
+            등록하기
+          </Button>
+        </div>
+
+        {/* <form onSubmit={addTodo} className={styles.inputForm}>
+          <Textfield
+            type="text"
+            value={inputContent}
+            onChange={e => setInputContent(e.target.value)}
+            placeholder="할 일을 입력해주세요."
+          />
+          <Button type="submit" variant="PRIMARY">
+            등록하기
+          </Button>
+        </form> */}
 
         <section className={styles.todoSection}>
           <h2>TO DO</h2>
@@ -190,17 +211,25 @@ export default function Todo() {
                       <input
                         type="text"
                         value={editContent}
-                        onChange={(e) => setEditContent(e.target.value)}
+                        onChange={e => setEditContent(e.target.value)}
                         className={styles.editInput}
                         autoFocus
                       />
-                      <button onClick={saveEdit} className={styles.completeBtn}>완료</button>
-                      <button onClick={cancelEdit} className={styles.cancelBtn}>취소</button>
+                      <button onClick={saveEdit} className={styles.completeBtn}>
+                        완료
+                      </button>
+                      <button onClick={cancelEdit} className={styles.cancelBtn}>
+                        취소
+                      </button>
                     </>
                   ) : (
                     <>
                       <label>
-                        <input type="checkbox" checked={todo.isDone} onChange={() => completeTodo(todo.id)} />
+                        <input
+                          type="checkbox"
+                          checked={todo.isDone}
+                          onChange={() => completeTodo(todo.id)}
+                        />
                         <span>{todo.content}</span>
                       </label>
                       <button onClick={() => startEdit(todo)}>수정</button>
@@ -222,7 +251,11 @@ export default function Todo() {
               {completedTodos.map(todo => (
                 <li key={todo.id}>
                   <label>
-                    <input type="checkbox" checked={todo.isDone} onChange={() => completeTodo(todo.id)} />
+                    <input
+                      type="checkbox"
+                      checked={todo.isDone}
+                      onChange={() => completeTodo(todo.id)}
+                    />
                     <span>{todo.content}</span>
                   </label>
                   <button onClick={() => deleteTodo(todo.id)}>삭제</button>
