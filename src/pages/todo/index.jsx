@@ -2,6 +2,9 @@ import { useState, useEffect } from 'react';
 import { todosAPI } from '../../api/todos';
 import styles from './todos.module.css';
 
+import Button from '../../shared/ui/atoms/Button';
+import Textfield from '../../shared/ui/atoms/Textfield';
+
 export default function Todo() {
   const [todoList, setTodoList] = useState([]);
   const [inputContent, setInputContent] = useState('');
@@ -32,7 +35,11 @@ export default function Todo() {
     }
   };
 
+<<<<<<< HEAD
   // 할일 추가
+=======
+  // 할일 추가 (DB에 저장)
+>>>>>>> 252bf0f936b310f43273655f58b96ecda69ec091
   const addTodo = async e => {
     e.preventDefault();
     if (!inputContent.trim()) return;
@@ -43,8 +50,14 @@ export default function Todo() {
         isDone: false,
       });
 
+<<<<<<< HEAD
       const newTodo = normalizeTodo(response.data);
       setTodoList([...todoList, newTodo]);
+=======
+      console.log('DB에 할 일 추가 완료:', response);
+
+      setTodoList([...todoList, response.data.todo]);
+>>>>>>> 252bf0f936b310f43273655f58b96ecda69ec091
       setInputContent('');
       setError('');
     } catch (error) {
@@ -53,13 +66,35 @@ export default function Todo() {
     }
   };
 
+<<<<<<< HEAD
   // 완료 상태 토글
+=======
+  // 완료 체크 (DB 업데이트)
+>>>>>>> 252bf0f936b310f43273655f58b96ecda69ec091
   const completeTodo = async id => {
     try {
       const response = await todosAPI.toggleTodo(id);
       const updatedTodo = normalizeTodo(response.data);
 
+<<<<<<< HEAD
       setTodoList(todoList.map(todo => (todo.id === id ? updatedTodo : todo)));
+=======
+      console.log('DB에서 할 일 상태 변경 완료');
+
+      setTodoList(
+        todoList.map(todo =>
+          todo.id === id
+            ? {
+                ...todo,
+                isDone:
+                  response.data.completed !== undefined
+                    ? response.data.completed
+                    : !todo.isDone,
+              }
+            : todo
+        )
+      );
+>>>>>>> 252bf0f936b310f43273655f58b96ecda69ec091
     } catch (error) {
       console.error('할 일 상태 변경 실패:', error);
       setError('할 일 상태를 변경하는데 실패했습니다.');
@@ -77,13 +112,28 @@ export default function Todo() {
     if (!editContent.trim()) return;
 
     try {
+<<<<<<< HEAD
       const response = await todosAPI.updateTodo(editingId, {
         content: editContent,
+=======
+      const todo = todoList.find(t => t.id === editingId);
+
+      // DB에서 업데이트
+      const response = await todosAPI.updateTodo(editingId, {
+        content: editContent,
+        isDone: todo.isDone,
+>>>>>>> 252bf0f936b310f43273655f58b96ecda69ec091
       });
 
       const updatedTodo = normalizeTodo(response.data);
       setTodoList(
+<<<<<<< HEAD
         todoList.map(todo => (todo.id === editingId ? updatedTodo : todo))
+=======
+        todoList.map(todo =>
+          todo.id === editingId ? { ...todo, content: editContent } : todo
+        )
+>>>>>>> 252bf0f936b310f43273655f58b96ecda69ec091
       );
       setEditingId(null);
       setEditContent('');
@@ -100,7 +150,11 @@ export default function Todo() {
     setEditContent('');
   };
 
+<<<<<<< HEAD
   // 삭제
+=======
+  // 삭제 (DB에서 삭제)
+>>>>>>> 252bf0f936b310f43273655f58b96ecda69ec091
   const deleteTodo = async id => {
     if (!window.confirm('정말 삭제하시겠습니까?')) {
       return;
@@ -138,15 +192,36 @@ export default function Todo() {
       >
         {error && <div className={styles.errorMessage}>{error}</div>}
 
+<<<<<<< HEAD
         <form onSubmit={addTodo} className={styles.inputForm}>
           <input
+            type="text"
+=======
+        <div>
+          <Textfield
+            id="input_content"
+            name="input_content"
+>>>>>>> 252bf0f936b310f43273655f58b96ecda69ec091
+            value={inputContent}
+            onChange={e => setInputContent(e.target.value)}
+            placeholder="할 일을 입력해주세요."
+          />
+          <Button variant="PRIMARY" onClick={addTodo}>
+            등록하기
+          </Button>
+        </div>
+
+        {/* <form onSubmit={addTodo} className={styles.inputForm}>
+          <Textfield
             type="text"
             value={inputContent}
             onChange={e => setInputContent(e.target.value)}
             placeholder="할 일을 입력해주세요."
           />
-          <button type="submit">등록하기</button>
-        </form>
+          <Button type="submit" variant="PRIMARY">
+            등록하기
+          </Button>
+        </form> */}
 
         <section className={styles.todoSection}>
           <h2>TO DO</h2>

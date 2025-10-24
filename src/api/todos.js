@@ -13,59 +13,53 @@ export const todosAPI = {
       throw error;
     }
   },
-
   // 할 일 추가
-  createTodo: async ({ title, content }) => {
+  createTodo: async ({ content }) => {
     try {
       const response = await axiosInstance.post('/todos', {
-        title,
         content,
       });
 
-      console.log('할 일 추가 성공:', response.status);
+      console.log('할 일 추가 성공:', response);
       return response;
     } catch (error) {
       console.error('할 일 추가 실패:', error);
       throw error;
     }
   },
-
   // 할 일 수정
-  updateTodo: async (id, { title, content, completed }) => {
+  updateTodo: async (id, { content, isDone }) => {
     try {
       const response = await axiosInstance.put(`/todos/${id}`, {
-        title,
         content,
-        completed,
+        isDone,
       });
 
-      console.log('할 일 수정 성공:', response.status);
+      console.log('할 일 수정 성공:', response);
       return response;
     } catch (error) {
       console.error('할 일 수정 실패:', error);
       throw error;
     }
   },
-
   // 할 일 삭제
   deleteTodo: async id => {
     try {
       const response = await axiosInstance.delete(`/todos/${id}`);
 
-      console.log('할 일 삭제 성공:', response.status);
+      console.log('할 일 삭제 성공:', response);
       return response;
     } catch (error) {
       console.error('할 일 삭제 실패:', error);
       throw error;
     }
   },
-
   // 할 일 완료 상태 토글
   toggleTodo: async id => {
     try {
       const response = await axiosInstance.patch(`/todos/${id}/toggle`);
 
-      console.log('할 일 상태 변경 성공:', response.status);
+      console.log('할 일 상태 변경 성공:', response);
       return response;
     } catch (error) {
       console.error('할 일 상태 변경 실패:', error);
