@@ -1,4 +1,5 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { todosAPI } from '../../api/todos';
 import styles from './todos.module.css';
 
 export default function Todo() {
@@ -6,29 +7,77 @@ export default function Todo() {
   const [inputContent, setInputContent] = useState('');
   const [editingId, setEditingId] = useState(null);
   const [editContent, setEditContent] = useState('');
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
 
-  // 할일 추가
-  const addTodo = (e) => {
+  // 컴포넌트 마운트 시 할 일 목록 불러오기 (DB에서)
+  useEffect(() => {
+    fetchTodos();
+  }, []);
+
+  // 할 일 목록 가져오기 (DB에서)
+  const fetchTodos = async () => {
+    try {
+      setLoading(true);
+      const response = await todosAPI.getTodos();
+      setTodoList(response.data);
+      setError('');
+    } catch (error) {
+      console.error('할 일 목록을 불러오는데 실패했습니다:', error);
+      setError('할 일 목록을 불러오는데 실패했습니다.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // 할일 추가 (DB에 저장)
+  const addTodo = async (e) => {
     e.preventDefault();
     if (!inputContent.trim()) return;
 
-    const newTodo = {
-      id: Date.now(),
-      content: inputContent,
-      isDone: false,
-    };
+    try {
+      // DB에 저장
+      const response = await todosAPI.createTodo({
+        title: inputContent,
+        content: inputContent,
+      });
 
-    setTodoList([...todoList, newTodo]);
-    setInputContent('');
+      console.log('DB에 할 일 추가 완료:', response.data);
+
+      const newTodo = {
+        id: response.data.id,
+        content: response.data.title || response.data.content,
+        isDone: response.data.completed || false,
+      };
+
+      setTodoList([...todoList, newTodo]);
+      setInputContent('');
+      setError('');
+    } catch (error) {
+      console.error('할 일 추가 실패:', error);
+      setError('할 일을 추가하는데 실패했습니다.');
+    }
   };
 
-  // 완료 체크
-  const completeTodo = (id) => {
-    setTodoList(
-      todoList.map(todo =>
-        todo.id === id ? { ...todo, isDone: !todo.isDone } : todo
-      )
-    );
+  // 완료 체크 (DB 업데이트)
+  const completeTodo = async (id) => {
+    try {
+      // DB에서 상태 토글
+      const response = await todosAPI.toggleTodo(id);
+
+      console.log('DB에서 할 일 상태 변경 완료');
+
+      setTodoList(
+        todoList.map(todo =>
+          todo.id === id 
+            ? { ...todo, isDone: response.data.completed !== undefined ? response.data.completed : !todo.isDone } 
+            : todo
+        )
+      );
+    } catch (error) {
+      console.error('할 일 상태 변경 실패:', error);
+      setError('할 일 상태를 변경하는데 실패했습니다.');
+    }
   };
 
   // 수정 시작
@@ -37,17 +86,36 @@ export default function Todo() {
     setEditContent(todo.content);
   };
 
-  // 수정 완료
-  const saveEdit = () => {
+  // 수정 완료 (DB 업데이트)
+  const saveEdit = async () => {
     if (!editContent.trim()) return;
 
-    setTodoList(
-      todoList.map(todo =>
-        todo.id === editingId ? { ...todo, content: editContent } : todo
-      )
-    );
-    setEditingId(null);
-    setEditContent('');
+    try {
+      const todo = todoList.find(t => t.id === editingId);
+      
+      // DB에서 업데이트
+      const response = await todosAPI.updateTodo(editingId, {
+        title: editContent,
+        content: editContent,
+        completed: todo.isDone,
+      });
+
+      console.log('DB에서 할 일 수정 완료:', response.data);
+
+      setTodoList(
+        todoList.map(todo =>
+          todo.id === editingId 
+            ? { ...todo, content: editContent } 
+            : todo
+        )
+      );
+      setEditingId(null);
+      setEditContent('');
+      setError('');
+    } catch (error) {
+      console.error('할 일 수정 실패:', error);
+      setError('할 일을 수정하는데 실패했습니다.');
+    }
   };
 
   // 수정 취소
@@ -56,9 +124,24 @@ export default function Todo() {
     setEditContent('');
   };
 
-  // 삭제
-  const deleteTodo = (id) => {
-    setTodoList(todoList.filter(todo => todo.id !== id));
+  // 삭제 (DB에서 삭제)
+  const deleteTodo = async (id) => {
+    if (!window.confirm('정말 삭제하시겠습니까?')) {
+      return;
+    }
+
+    try {
+      // DB에서 삭제
+      await todosAPI.deleteTodo(id);
+
+      console.log('DB에서 할 일 삭제 완료');
+
+      setTodoList(todoList.filter(todo => todo.id !== id));
+      setError('');
+    } catch (error) {
+      console.error('할 일 삭제 실패:', error);
+      setError('할 일을 삭제하는데 실패했습니다.');
+    }
   };
 
   // 미완료 할일
@@ -67,13 +150,23 @@ export default function Todo() {
   // 완료된 할일
   const completedTodos = todoList.filter(todo => todo.isDone);
 
+  if (loading) {
+    return (
+      <div className={styles.container}>
+        <div className={styles.loading}>로딩 중...</div>
+      </div>
+    );
+  }
+
   return (
     <div className={styles.container}>
       <aside className={styles.sidebar}>
         <h1>할 일 목록</h1>
       </aside>
 
-      <main className={styles.main}>
+      <div style={{flex: 1, display: 'flex', flexDirection: 'column', gap: '20px'}}>
+        {error && <div className={styles.errorMessage}>{error}</div>}
+        
         <form onSubmit={addTodo} className={styles.inputForm}>
           <input
             type="text"
@@ -138,7 +231,7 @@ export default function Todo() {
             </ul>
           )}
         </section>
-      </main>
+      </div>
     </div>
   );
 }
