@@ -1,11 +1,11 @@
 import { useForm } from 'react-hook-form';
 import { Link, useNavigate } from 'react-router-dom';
 import Cookies from 'universal-cookie';
-import styles from '../auth.module.css';
+import '../auth.css';
 import { usersAPI } from '../../../api/users';
 
-import Button from '../../../shared/ui/atoms/Button';
-import Textfield from '../../../shared/ui/atoms/Textfield';
+import Button from '../../../components/atoms/Button';
+import Textfield from '../../../components/atoms/Textfield';
 
 const cookies = new Cookies();
 
@@ -61,8 +61,8 @@ const LoginPage = () => {
   };
 
   return (
-    <main className={styles.login}>
-      <form className={styles.authForm} onSubmit={handleSubmit(onSubmit)}>
+    <main className="login">
+      <form className="auth-form" onSubmit={handleSubmit(onSubmit)}>
         <h1>로그인</h1>
         <Textfield
           id="username"
@@ -88,7 +88,7 @@ const LoginPage = () => {
           })}
         />
         {(errors.username || errors.password || errors.root?.serverError) && (
-          <span className={styles.errorMessage}>
+          <span className="error-message">
             {errors.root?.serverError?.message ||
               errors.username?.message ||
               errors.password?.message}
@@ -98,7 +98,7 @@ const LoginPage = () => {
           로그인
         </Button>
       </form>
-      <Link to="/join" className={styles.join}>
+      <Link to="/join" className="join">
         회원가입
       </Link>
     </main>
