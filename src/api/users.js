@@ -1,4 +1,7 @@
 import axiosInstance from '../utils/axios';
+import Cookies from 'universal-cookie';
+
+const cookies = new Cookies();
 
 export const usersAPI = {
   login: async ({ username, password }) => {
@@ -29,5 +32,10 @@ export const usersAPI = {
       console.error('회원가입 실패: ', error);
       throw error;
     }
+  },
+  logout: () => {
+    cookies.remove('token', { path: '/' });
+    localStorage.removeItem('user');
+    window.location.href = '/';
   },
 };

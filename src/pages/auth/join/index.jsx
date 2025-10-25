@@ -1,10 +1,10 @@
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
-import styles from '../auth.module.css';
+import '../auth.css';
 import { usersAPI } from '../../../api/users';
 
-import Textfield from '../../../shared/ui/atoms/Textfield';
-import Button from '../../../shared/ui/atoms/Button';
+import Textfield from '../../../components/atoms/Textfield';
+import Button from '../../../components/atoms/Button';
 
 const JoinPage = () => {
   const navigate = useNavigate();
@@ -42,7 +42,7 @@ const JoinPage = () => {
 
   return (
     <main>
-      <form className={styles.authForm} onSubmit={handleSubmit(onSubmit)}>
+      <form className="auth-form" onSubmit={handleSubmit(onSubmit)}>
         <h1>회원가입</h1>
         <Textfield
           id="username"
@@ -99,7 +99,7 @@ const JoinPage = () => {
           })}
         />
         {(errors.username || errors.password || errors.passwordConfirm) && (
-          <span className={styles.errorMessage}>
+          <span className="error-message">
             {errors.username?.message ||
               errors.password?.message ||
               errors.passwordConfirm?.message}

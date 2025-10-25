@@ -1,10 +1,10 @@
 import { useState } from 'react';
 import './common.css';
 // 공통 컴포넌트
-import Button from '../../shared/ui/atoms/Button';
-import Textfield from '../../shared/ui/atoms/Textfield';
-import Checkfield from '../../shared/ui/atoms/Checkfield';
-import AlertDialog from '../../shared/ui/molecules/AlertDialog';
+import Button from '../../components/atoms/Button';
+import Textfield from '../../components/atoms/Textfield';
+import Checkfield from '../../components/atoms/Checkfield';
+import AlertDialog from '../../components/molecules/AlertDialog';
 
 const Common = () => {
   const [isChecked, setIsChecked] = useState(false);

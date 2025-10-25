@@ -1,11 +1,14 @@
 import { useState, useEffect } from 'react';
 import { todosAPI } from '../../api/todos';
-import styles from './todos.module.css';
+import { usersAPI } from '../../api/users';
+import './todos.css';
 
-import Button from '../../shared/ui/atoms/Button';
-import Textfield from '../../shared/ui/atoms/Textfield';
-import Checkfield from '../../shared/ui/atoms/Checkfield';
-import AlertDialog from '../../shared/ui/molecules/AlertDialog';
+import Button from '../../components/atoms/Button';
+import Textfield from '../../components/atoms/Textfield';
+import Checkfield from '../../components/atoms/Checkfield';
+import AlertDialog from '../../components/molecules/AlertDialog';
+import CreateTeamDialog from '../../components/molecules/CreateTeamDialog';
+import InviteTeamMemberDialog from '../../components/molecules/InviteTeamMemberDialog';
 
 export default function Todo() {
   const [deletedId, setDeletedId] = useState(null);
@@ -14,7 +17,16 @@ export default function Todo() {
   const [editingId, setEditingId] = useState(null);
   const [editContent, setEditContent] = useState('');
   const [loading, setLoading] = useState(true);
+  const [showDropMenu, setShowDropMenu] = useState(false);
+  const [showUserMenu, setShowUserMenu] = useState(false);
+  // 다이얼로그 상태
   const [isAlertOpen, setIsAlertOpen] = useState(false);
+  const [isCreateTeamOpen, setIsCreateTeamOpen] = useState(false);
+  const [isInviteMemberOpen, setIsInviteMemberOpen] = useState(false);
+
+  const user = localStorage.getItem('user');
+
+  const username = user ? JSON.parse(user).username : '';
 
   // 컴포넌트 마운트 시 할 일 목록 불러오기 (DB에서)
   useEffect(() => {
@@ -136,17 +148,88 @@ export default function Todo() {
   // 완료된 할일
   const completedTodos = todoList.filter(todo => todo.is_done);
 
+  const teamList = [
+    { id: 1, teamname: '팀 A' },
+    { id: 2, teamname: '팀 B' },
+    { id: 3, teamname: '팀 C' },
+  ];
+
   return (
     <>
-      <div className={styles.container}>
-        <aside className={styles.sidebar}>
-          <h1>할 일 목록</h1>
+      <div className="container">
+        <aside className="sidebar">
+          <nav className="sidebar-nav">
+            <ul>
+              <li>개인 할일 목록</li>
+              {/* 팀 할일 목록 */}
+              {teamList.map(({ teamname, id }) => (
+                <li key={id} className="nav-item">
+                  <span>{teamname}의 할일 목록</span>
+                  <div className="dropmenu">
+                    <button
+                      className="dropmenu-button"
+                      onClick={() =>
+                        setShowDropMenu(showDropMenu === id ? null : id)
+                      }
+                    >
+                      <img src="/ellipsis.svg" alt="dropmenu" />
+                    </button>
+                    {showDropMenu === id && (
+                      <div className="menu">
+                        <button
+                          className="invite"
+                          onClick={() => {
+                            setIsInviteMemberOpen(true);
+                            setShowDropMenu(null);
+                          }}
+                        >
+                          초대하기
+                        </button>
+                        <button
+                          className="delete"
+                          onClick={() => setShowDropMenu(null)}
+                        >
+                          삭제하기
+                        </button>
+                      </div>
+                    )}
+                  </div>
+                </li>
+              ))}
+            </ul>
+            <Button
+              variant="GHOST"
+              size="FULL"
+              onClick={() => setIsCreateTeamOpen(true)}
+            >
+              팀 만들기
+            </Button>
+          </nav>
+          {/* 사용자 정보 (하단) */}
+          <div className="sidebar-footer">
+            <div className="user-info">
+              <span>{username}</span>
+              <button
+                className="dropmenu-button"
+                onClick={() => setShowUserMenu(true)}
+              >
+                <img src="/ellipsis.svg" alt="dropmenu" />
+              </button>
+              {showUserMenu && (
+                <div className="menu user-menu">
+                  <button className="" onClick={usersAPI.logout}>
+                    로그아웃
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
         </aside>
 
-        <div className={styles.divider} />
+        <div className="divider" />
 
-        <div className={styles.todoMain}>
-          <div className={styles.inputGroup}>
+        <div className="main-content">
+          <div className="input-group">
             <Textfield
               id="input_content"
               name="input_content"
@@ -159,10 +242,10 @@ export default function Todo() {
             </Button>
           </div>
 
-          <section className={styles.todoSection}>
+          <section className="todo-section">
             <h2>TO DO</h2>
             {activeTodos.length === 0 ? (
-              <p className={styles.empty}>할 일 항목이 없습니다.</p>
+              <p className="empty">할 일 항목이 없습니다.</p>
             ) : (
               <ul>
                 {activeTodos.map(todo => (
@@ -174,7 +257,7 @@ export default function Todo() {
                           onChange={e => setEditContent(e.target.value)}
                           autoFocus
                         />
-                        <div className={styles.buttonGroup}>
+                        <div className="button-group">
                           <Button variant="PRIMARY" onClick={saveEdit}>
                             완료
                           </Button>
@@ -191,7 +274,7 @@ export default function Todo() {
                           onChange={() => completeTodo(todo.id)}
                           label={todo.content}
                         />
-                        <div className={styles.buttonGroup}>
+                        <div className="button-group">
                           <Button
                             variant="GHOST"
                             onClick={() => startEdit(todo)}
@@ -216,10 +299,10 @@ export default function Todo() {
             )}
           </section>
 
-          <section className={styles.doneSection}>
+          <section className="done-section">
             <h2>DONE</h2>
             {completedTodos.length === 0 ? (
-              <p className={styles.empty}>완료 항목이 없습니다.</p>
+              <p className="empty">완료 항목이 없습니다.</p>
             ) : (
               <ul>
                 {completedTodos.map(todo => (
@@ -252,6 +335,20 @@ export default function Todo() {
           title="정말 삭제하시겠습니까?"
           onConfirm={() => deleteTodo(deletedId)}
           onCancel={() => setIsAlertOpen(false)}
+        />
+      )}
+      {isCreateTeamOpen && (
+        <CreateTeamDialog
+          isOpen={isCreateTeamOpen}
+          onConfirm={() => {}}
+          onCancel={() => setIsCreateTeamOpen(false)}
+        />
+      )}
+      {isInviteMemberOpen && (
+        <InviteTeamMemberDialog
+          isOpen={isInviteMemberOpen}
+          onConfirm={() => {}}
+          onCancel={() => setIsInviteMemberOpen(false)}
         />
       )}
     </>
