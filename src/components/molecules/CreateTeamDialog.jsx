@@ -1,4 +1,4 @@
-import './CreateTeamDialog.css';
+import './Dialog.css';
 import Button from '../atoms/Button';
 import Textfield from '../atoms/Textfield';
 

@@ -5,10 +5,14 @@ import Button from '../../components/atoms/Button';
 import Textfield from '../../components/atoms/Textfield';
 import Checkfield from '../../components/atoms/Checkfield';
 import AlertDialog from '../../components/molecules/AlertDialog';
+import CreateTeamDialog from '../../components/molecules/CreateTeamDialog';
+import InviteTeamMemberDialog from '../../components/molecules/InviteTeamMemberDialog';
 
 const Common = () => {
   const [isChecked, setIsChecked] = useState(false);
   const [isAlertOpen, setIsAlertOpen] = useState(false);
+  const [isCreateTeamOpen, setIsCreateTeamOpen] = useState(false);
+  const [isInviteMemberOpen, setIsInviteMemberOpen] = useState(false);
 
   const handleClick = e => {
     alert('버튼이 클릭되었습니다.');
@@ -29,7 +33,7 @@ const Common = () => {
 
   return (
     <>
-      <main>
+      <main className="main-container">
         <h1>공통 컴포넌트 페이지</h1>
         <p>이 페이지는 공통 컴포넌트를 테스트하기 위한 페이지입니다.</p>
 
@@ -48,6 +52,26 @@ const Common = () => {
         <div className="common">
           <Button variant="PRIMARY" size="FULL">
             FULL SIZE
+          </Button>
+        </div>
+        {/* 다이얼로그 버튼 */}
+        <div className="common">
+          <Button variant="OUTLINE_DANGER" onClick={() => setIsAlertOpen(true)}>
+            삭제
+          </Button>
+          <Button
+            variant="GHOST"
+            size="FULL"
+            onClick={() => setIsCreateTeamOpen(true)}
+          >
+            팀 만들기
+          </Button>
+          <Button
+            variant="PRIMARY"
+            size="FULL"
+            onClick={() => setIsInviteMemberOpen(true)}
+          >
+            초대하기
           </Button>
         </div>
 
@@ -76,6 +100,22 @@ const Common = () => {
           title="정말 삭제하시겠습니까?"
           onConfirm={confirmDelete}
           onCancel={() => setIsAlertOpen(false)}
+        />
+      )}
+      {isCreateTeamOpen && (
+        <CreateTeamDialog
+          isOpen={isCreateTeamOpen}
+          title="정말 삭제하시겠습니까?"
+          onConfirm={confirmDelete}
+          onCancel={() => setIsCreateTeamOpen(false)}
+        />
+      )}
+      {isInviteMemberOpen && (
+        <InviteTeamMemberDialog
+          isOpen={isInviteMemberOpen}
+          title="정말 삭제하시겠습니까?"
+          onConfirm={confirmDelete}
+          onCancel={() => setIsInviteMemberOpen(false)}
         />
       )}
     </>

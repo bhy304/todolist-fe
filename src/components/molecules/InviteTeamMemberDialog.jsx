@@ -1,4 +1,4 @@
-import './InviteTeamMemberDialog.css';
+import './Dialog.css';
 import Button from '../atoms/Button';
 import Textfield from '../atoms/Textfield';
 

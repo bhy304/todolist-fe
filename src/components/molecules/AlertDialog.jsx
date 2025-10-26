@@ -1,4 +1,4 @@
-import './AlertDialog.css';
+import './Dialog.css';
 import Button from '../atoms/Button';
 
 const AlertDialog = ({ title, onConfirm, onCancel, isOpen }) => {
