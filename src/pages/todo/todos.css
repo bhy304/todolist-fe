@@ -38,6 +38,7 @@
   line-height: 1.5;
   display: flex;
   justify-content: space-between;
+  cursor: pointer;
 }
 
 .sidebar-nav .dropmenu {
