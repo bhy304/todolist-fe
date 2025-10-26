@@ -5,6 +5,8 @@
   font-size: 16px;
   font-weight: 400;
   width: fit-content;
+  white-space: normal;
+  word-break: keep-all;
 }
 
 .primary {

@@ -1,3 +1,4 @@
+/* 공통 CSS */
 .overlay {
   position: fixed;
   inset: 0;
@@ -30,6 +31,38 @@
   display: flex;
   justify-content: flex-end;
   gap: 4px;
+}
+
+/* InviteTeamMemberDialog */
+.dialog-input-group {
+  display: flex;
+  gap: 20px;
+}
+
+.dialog-input-group input::placeholder {
+  font-size: 14px;
+}
+
+.dialog-member-list {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  margin-top: 20px;
+  margin-bottom: 40px;
+}
+
+.dialog-member-list li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.dialog-button-group {
+  display: flex;
+  justify-content: flex-end;
+  gap: 4px;
+  margin-top: 40px;
 }
 
 @keyframes fadeIn {
