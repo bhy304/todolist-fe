@@ -1,9 +1,32 @@
 import './Dialog.css';
+import { useState } from 'react';
+import { teamsAPI } from '../../api/teams';
+
 import Button from '../atoms/Button';
 import Textfield from '../atoms/Textfield';
 
-const CreateTeamDialog = ({ onConfirm, onCancel, isOpen }) => {
+const CreateTeamDialog = ({
+  onConfirm,
+  onCancel,
+  isOpen,
+  setIsCreateTeamOpen,
+}) => {
   if (!isOpen) return null;
+
+  const [teamname, setTeamname] = useState('');
+
+  const createTeam = async teamname => {
+    try {
+      const response = await teamsAPI.createTeam({ teamname });
+      console.log(response);
+
+      setTeamname('');
+      setIsCreateTeamOpen(false);
+      onConfirm?.(); // 팀 생성 성공 시 onConfirm 콜백 호출
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   return (
     <div className="overlay">
@@ -12,11 +35,12 @@ const CreateTeamDialog = ({ onConfirm, onCancel, isOpen }) => {
         <Textfield
           id="teamname"
           name="teamname"
-          onChange={() => {}}
+          value={teamname}
+          onChange={e => setTeamname(e.target.value)}
           placeholder="팀 이름을 입력해주세요."
         />
         <div className="dialog-button-group">
-          <Button variant="PRIMARY" onClick={onConfirm}>
+          <Button variant="PRIMARY" onClick={() => createTeam(teamname)}>
             만들기
           </Button>
           <Button variant="GHOST" onClick={onCancel}>

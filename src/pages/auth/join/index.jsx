@@ -24,12 +24,10 @@ const JoinPage = () => {
     try {
       const result = await usersAPI.join({ username, password });
 
-      console.log('회원가입 성공:', result);
-
       // 회원가입 성공 시 로그인 페이지로 이동
       navigate('/');
     } catch (error) {
-      console.error('회원가입 실패:', error);
+      console.error(error);
 
       if (error.response?.data.errorCode === 'DUPLICATE_USERNAME') {
         setError('username', {
@@ -41,7 +39,7 @@ const JoinPage = () => {
   };
 
   return (
-    <main>
+    <main className="auth">
       <form className="auth-form" onSubmit={handleSubmit(onSubmit)}>
         <h1>회원가입</h1>
         <Textfield

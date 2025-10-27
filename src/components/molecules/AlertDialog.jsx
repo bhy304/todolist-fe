@@ -7,7 +7,7 @@ const AlertDialog = ({ title, onConfirm, onCancel, isOpen }) => {
   return (
     <div className="overlay">
       <div className="dialog" onClick={e => e.stopPropagation()}>
-        <h2 className="dialog-title">{title}</h2>
+        <h2 className="dialog-title mb-60">{title}</h2>
         <div className="dialog-button-group">
           <Button variant="PRIMARY" onClick={onConfirm}>
             확인

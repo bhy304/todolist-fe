@@ -1,10 +1,9 @@
 import axiosInstance from '../utils/axios';
 
-export const todosAPI = {
-  // 모든 할 일 가져오기
-  getTodos: async () => {
+export const teamTodosAPI = {
+  getTeamTodos: async id => {
     try {
-      const response = await axiosInstance.get('/todos');
+      const response = await axiosInstance.get(`/team/todos/${id}`);
 
       return response;
     } catch (error) {
@@ -12,10 +11,9 @@ export const todosAPI = {
       throw error;
     }
   },
-  // 할 일 추가
-  createTodo: async ({ content }) => {
+  createTeamTodo: async (id, { content }) => {
     try {
-      const response = await axiosInstance.post('/todos', {
+      const response = await axiosInstance.post(`/team/todos/${id}`, {
         content,
       });
 
@@ -25,10 +23,9 @@ export const todosAPI = {
       throw error;
     }
   },
-  // 할 일 수정
-  updateTodo: async (id, { content }) => {
+  updateTeamTodo: async (id, { content }) => {
     try {
-      const response = await axiosInstance.put(`/todos/${id}`, {
+      const response = await axiosInstance.put(`/team/todos/${id}`, {
         content,
       });
 
@@ -38,10 +35,9 @@ export const todosAPI = {
       throw error;
     }
   },
-  // 할 일 삭제
-  deleteTodo: async id => {
+  deleteTeamTodo: async id => {
     try {
-      const response = await axiosInstance.delete(`/todos/${id}`);
+      const response = await axiosInstance.delete(`/team/todos/${id}`);
 
       return response;
     } catch (error) {
@@ -49,10 +45,9 @@ export const todosAPI = {
       throw error;
     }
   },
-  // 할 일 완료 상태 토글
-  toggleTodo: async id => {
+  toggleTeamTodo: async id => {
     try {
-      const response = await axiosInstance.patch(`/todos/${id}/toggle`);
+      const response = await axiosInstance.patch(`/team/todos/${id}/toggle`);
 
       return response;
     } catch (error) {
