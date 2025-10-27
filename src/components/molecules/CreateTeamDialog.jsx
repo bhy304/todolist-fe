@@ -31,7 +31,7 @@ const CreateTeamDialog = ({
   return (
     <div className="overlay">
       <div className="dialog" onClick={e => e.stopPropagation()}>
-        <h2 className="dialog-title">팀 만들기</h2>
+        <h2 className="dialog-title mb-20">팀 만들기</h2>
         <Textfield
           id="teamname"
           name="teamname"
