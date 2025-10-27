@@ -41,15 +41,14 @@ export default function TodoPage() {
       setTodoList(response.data);
       console.log('개인 할일 목록', response.data);
     } catch (error) {
-      console.error('할 일 목록을 불러오는데 실패했습니다:', error);
+      console.error(error);
     }
   };
 
   const fetchTeams = async () => {
     try {
       const response = await teamsAPI.getTeams();
-      console.log(response);
-      setTeamList(response.data);
+      setTeamList(response.data.data);
     } catch (error) {
       console.error(error);
     }
@@ -95,7 +94,7 @@ export default function TodoPage() {
       }
       setInputContent('');
     } catch (error) {
-      console.error('할 일 추가 실패:', error);
+      console.error(error);
     }
   };
 
@@ -129,7 +128,7 @@ export default function TodoPage() {
         );
       }
     } catch (error) {
-      console.error('할 일 상태 변경 실패:', error);
+      console.error(error);
     }
   };
 
@@ -169,7 +168,7 @@ export default function TodoPage() {
       setEditingId(null);
       setEditContent('');
     } catch (error) {
-      console.error('할 일 수정 실패:', error);
+      console.error(error);
     }
   };
 
@@ -192,7 +191,7 @@ export default function TodoPage() {
 
       setIsAlertOpen(false);
     } catch (error) {
-      console.error('할 일 삭제 실패:', error);
+      console.error(error);
     }
   };
 
@@ -404,6 +403,7 @@ export default function TodoPage() {
       {isInviteMemberOpen && (
         <InviteTeamMemberDialog
           isOpen={isInviteMemberOpen}
+          teamId={teamId}
           onConfirm={() => {}}
           onCancel={() => setIsInviteMemberOpen(false)}
         />
