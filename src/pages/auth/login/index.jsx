@@ -26,8 +26,6 @@ const LoginPage = () => {
     try {
       const response = await usersAPI.login({ username, password });
 
-      console.log('로그인 성공:', response);
-
       if (response.data.success) {
         const { token, user } = response.data;
 
@@ -43,7 +41,7 @@ const LoginPage = () => {
         navigate('/todo');
       }
     } catch (error) {
-      console.error('로그인 실패: ', error);
+      console.error(error);
 
       // 401 에러 처리 react-hook-form 에러로 추가
       if (error.response?.data.errorCode === 'INVALID_CREDENTIALS') {
@@ -61,7 +59,7 @@ const LoginPage = () => {
   };
 
   return (
-    <main className="login">
+    <main className="auth">
       <form className="auth-form" onSubmit={handleSubmit(onSubmit)}>
         <h1>로그인</h1>
         <Textfield

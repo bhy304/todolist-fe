@@ -11,10 +11,9 @@ export const usersAPI = {
         password,
       });
 
-      console.log('로그인 성공: ', response);
       return response;
     } catch (error) {
-      console.error('로그인 실패: ', error);
+      console.error('실패: ', error);
       throw error;
     }
   },
@@ -25,11 +24,9 @@ export const usersAPI = {
         password,
       });
 
-      console.log('회원가입 성공: ', response.status);
-
       return response;
     } catch (error) {
-      console.error('회원가입 실패: ', error);
+      console.error('실패: ', error);
       throw error;
     }
   },

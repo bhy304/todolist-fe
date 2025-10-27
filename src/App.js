@@ -5,9 +5,9 @@ import {
   Navigate,
 } from 'react-router-dom';
 import Cookies from 'universal-cookie';
-import Todo from './pages/todo';
-import Login from './pages/auth/login';
-import Join from './pages/auth/join';
+import TodoPage from './pages/todo';
+import LoginPage from './pages/auth/login';
+import JoinPage from './pages/auth/join';
 import Common from './pages/common';
 
 const cookies = new Cookies();
@@ -26,13 +26,13 @@ function App() {
     <Router>
       <div className="App">
         <Routes>
-          <Route path="/" element={<Login />} />
-          <Route path="/join" element={<Join />} />
+          <Route path="/" element={<LoginPage />} />
+          <Route path="/join" element={<JoinPage />} />
           <Route
             path="/todo"
             element={
               <ProtectedRoute>
-                <Todo />
+                <TodoPage />
               </ProtectedRoute>
             }
           />
