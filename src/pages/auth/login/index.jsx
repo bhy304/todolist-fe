@@ -59,7 +59,7 @@ const LoginPage = () => {
   };
 
   return (
-    <main className="login">
+    <main className="auth">
       <form className="auth-form" onSubmit={handleSubmit(onSubmit)}>
         <h1>로그인</h1>
         <Textfield

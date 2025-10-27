@@ -39,7 +39,7 @@ const JoinPage = () => {
   };
 
   return (
-    <main>
+    <main className="auth">
       <form className="auth-form" onSubmit={handleSubmit(onSubmit)}>
         <h1>회원가입</h1>
         <Textfield

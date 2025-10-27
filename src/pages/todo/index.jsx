@@ -30,6 +30,28 @@ export default function TodoPage() {
   const user = localStorage.getItem('user');
   const username = user ? JSON.parse(user).username : '';
 
+  // 외부 클릭 감지를 위한 useEffect 추가
+  useEffect(() => {
+    const handleClickOutside = event => {
+      // 메뉴가 열려있을 때만 체크
+      if (showDropMenu || showUserMenu) {
+        // 클릭한 요소가 메뉴나 드롭메뉴 버튼이 아닌 경우
+        const isDropMenuButton = event.target.closest('.dropmenu-button');
+        const isMenu = event.target.closest('.menu');
+        if (!isDropMenuButton && !isMenu) {
+          setShowDropMenu(false);
+          setShowUserMenu(false);
+        }
+      }
+    };
+    // document에 클릭 이벤트 리스너 추가
+    document.addEventListener('mousedown', handleClickOutside);
+    // cleanup: 컴포넌트 언마운트 시 이벤트 리스너 제거
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [showDropMenu, showUserMenu]);
+
   useEffect(() => {
     fetchTodos();
     fetchTeams();
@@ -39,7 +61,6 @@ export default function TodoPage() {
     try {
       const response = await todosAPI.getTodos();
       setTodoList(response.data);
-      console.log('개인 할일 목록', response.data);
     } catch (error) {
       console.error(error);
     }
@@ -57,7 +78,6 @@ export default function TodoPage() {
   const fetchTeamTodos = async id => {
     try {
       const response = await teamTodosAPI.getTeamTodos(id);
-      console.log('팀 할일', response);
       setTodoList(response.data);
     } catch (error) {
       console.error(error);
@@ -87,8 +107,6 @@ export default function TodoPage() {
         const response = await todosAPI.createTodo({
           content: inputContent,
         });
-
-        console.log('DB에 할 일 추가 완료:', response);
 
         setTodoList([...todoList, response.data.todo]);
       }
@@ -266,7 +284,7 @@ export default function TodoPage() {
               <span>{username}</span>
               <button
                 className="dropmenu-button"
-                onClick={() => setShowUserMenu(true)}
+                onClick={() => setShowUserMenu(!showUserMenu)}
               >
                 <img src="/ellipsis.svg" alt="dropmenu" />
               </button>

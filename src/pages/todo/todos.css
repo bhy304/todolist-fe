@@ -65,20 +65,21 @@
   position: absolute;
   display: flex;
   flex-direction: column;
-  height: 86px;
+  gap: 8px;
   justify-content: center;
   align-items: flex-start;
   right: 0;
-  top: 100%;
   background: white;
   border: 1px solid #ddd;
   border-radius: 4px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   width: 155px;
+  height: fit-content;
   z-index: 10;
   padding: 12px;
   cursor: pointer;
   border-bottom: 1px solid #eee;
+  border: 1px solid #000;
 }
 
 .menu .invite,
@@ -93,11 +94,11 @@
 
 /* 사용자 정보 (하단) */
 .sidebar-footer {
-  /* padding: 20px; */
+  position: relative;
+  margin-bottom: 50px;
 }
 
-.user-info {
-  position: relative;
+.sidebar-footer .user-info {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -114,9 +115,11 @@
 }
 
 .user-menu {
-  left: 0;
+  display: flex;
+  padding: 12px;
+  width: 151px;
+  height: 51px;
   bottom: 100%;
-  top: 0;
 }
 
 /* Divider */
