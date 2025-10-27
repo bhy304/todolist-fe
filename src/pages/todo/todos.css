@@ -41,6 +41,12 @@
   cursor: pointer;
 }
 
+.sidebar-nav ul li.nav-item span {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 .sidebar-nav .dropmenu {
   position: relative;
   width: 24px;
@@ -53,7 +59,8 @@
   background: none;
   border: none;
   cursor: pointer;
-  padding: 4px;
+  width: 24px;
+  height: 24px;
 }
 
 .sidebar-nav .dropmenu-button img {
@@ -112,6 +119,10 @@
   border: 1px solid #e0e0e0;
   border-radius: 8px;
   cursor: pointer;
+}
+
+.dropdown-menu {
+  top: 100%;
 }
 
 .user-menu {
