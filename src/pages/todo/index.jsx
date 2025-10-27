@@ -222,7 +222,7 @@ export default function TodoPage() {
         <aside className="sidebar">
           <nav className="sidebar-nav">
             <ul>
-              <li onClick={fetchTodos}>개인 할일 목록</li>
+              <li onClick={() => { fetchTodos(); setTeamId(null); }}>개인 할일 목록</li>
               {/* 팀 할일 목록 */}
               {teamList.map(({ teamname, id }) => (
                 <li
