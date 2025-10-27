@@ -6,10 +6,9 @@ export const teamsAPI = {
     try {
       const response = await axiosInstance.post('/teams', { teamname });
 
-      console.log('할 일 목록 조회 성공:', response);
       return response;
     } catch (error) {
-      console.error('할 일 목록 조회 실패:', error);
+      console.error('실패:', error);
       throw error;
     }
   },
@@ -18,7 +17,6 @@ export const teamsAPI = {
     try {
       const response = await axiosInstance.delete(`/teams/${id}`);
 
-      console.log('성공:', response);
       return response;
     } catch (error) {
       console.error('실패:', error);
@@ -26,11 +24,12 @@ export const teamsAPI = {
     }
   },
   // 팀 초대 (팀원의 아이디를 입력해서 팀원 초대)
-  inviteMember: async () => {
+  inviteMember: async (id, { username }) => {
     try {
-      const response = await axiosInstance.post('/teams/invite');
+      const response = await axiosInstance.post(`/teams/${id}/members`, {
+        username,
+      });
 
-      console.log('성공:', response);
       return response;
     } catch (error) {
       console.error('실패:', error);
@@ -42,7 +41,6 @@ export const teamsAPI = {
     try {
       const response = await axiosInstance.get('/teams');
 
-      console.log('성공:', response);
       return response;
     } catch (error) {
       console.error('실패:', error);
@@ -50,11 +48,12 @@ export const teamsAPI = {
     }
   },
   // 팀원 삭제
-  deleteTeamMember: async id => {
+  deleteTeamMember: async (teamId, memberId) => {
     try {
-      const response = await axiosInstance.delete(`/teams/members/${id}`);
+      const response = await axiosInstance.delete(
+        `/teams/${teamId}/members/${memberId}`
+      );
 
-      console.log('성공:', response);
       return response;
     } catch (error) {
       console.error('실패:', error);
@@ -64,9 +63,8 @@ export const teamsAPI = {
   // 팀원 목록 조회
   getTeamMembers: async id => {
     try {
-      const response = await axiosInstance.get(`/teams/members/${id}`);
+      const response = await axiosInstance.get(`/teams/${id}/members`);
 
-      console.log('성공:', response);
       return response;
     } catch (error) {
       console.error('실패:', error);
