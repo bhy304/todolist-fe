@@ -9,7 +9,7 @@ const axiosInstance = axios.create({
   headers: {
     'Content-Type': 'application/json',
   },
-  withCredentials: true, // 쿠키를 주고받기 위해 필요
+  withCredentials: true,
 });
 
 axiosInstance.interceptors.request.use(
@@ -17,7 +17,7 @@ axiosInstance.interceptors.request.use(
     const token = cookies.get('token');
 
     if (token) {
-      config.headers.Authorization = `Bearer ${token}`; // 토큰 자동 추가
+      config.headers.Authorization = `Bearer ${token}`;
     }
 
     console.log('API 요청:', config.method.toUpperCase(), config.url);
