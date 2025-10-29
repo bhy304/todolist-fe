@@ -8,11 +8,10 @@ import Button from '../atoms/Button';
 import CreateTeamDialog from '../../components/molecules/CreateTeamDialog';
 import InviteTeamMemberDialog from '../../components/molecules/InviteTeamMemberDialog';
 
-const Sidebar = ({ setTodoList }) => {
+const Sidebar = ({ teamId, setTeamId, setTodoList }) => {
   const user = localStorage.getItem('user');
   const username = user ? JSON.parse(user).username : '';
 
-  const [teamId, setTeamId] = useState(null);
   const [teamList, setTeamList] = useState([]);
   const [showDropMenu, setShowDropMenu] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
@@ -39,22 +38,62 @@ const Sidebar = ({ setTodoList }) => {
   }, [showDropMenu, showUserMenu]);
 
   useEffect(() => {
-    fetchTeams();
+    const initializeSidebar = async () => {
+      // 먼저 팀 목록을 불러옴
+      await fetchTeams();
+
+      const lastSelectedId = localStorage.getItem('lastSelectedId');
+
+      if (lastSelectedId && lastSelectedId !== 'null') {
+        // 팀 할일 목록이 마지막으로 선택됨
+        const teamId = Number(lastSelectedId);
+
+        // 팀 목록을 불러온 후 해당 팀이 존재하는지 확인
+        try {
+          await fetchTeamTodos(teamId);
+          setTeamId(teamId);
+        } catch (error) {
+          // 팀이 삭제되었거나 접근 권한이 없는 경우 개인 할일 목록으로 폴백
+          console.error(
+            '팀 할일 목록을 불러올 수 없습니다. 개인 할일 목록으로 이동합니다.'
+          );
+          await fetchTodos();
+          setTeamId(null);
+          localStorage.setItem('lastSelectedId', 'null');
+        }
+      } else {
+        // 개인 할일 목록이 마지막으로 선택됨 또는 첫 방문
+        await fetchTodos();
+        setTeamId(null);
+      }
+    };
+
+    initializeSidebar();
   }, []);
 
   const fetchTeams = async () => {
     try {
       const response = await teamsAPI.getTeams();
       setTeamList(response.data.data);
+      return response.data.data;
     } catch (error) {
       console.error(error);
+      return [];
     }
   };
 
   const deleteTeam = async id => {
     try {
       await teamsAPI.deleteTeam(id);
-      fetchTeams();
+      await fetchTeams();
+
+      // 삭제된 팀이 현재 선택된 팀이라면 개인 할일 목록으로 전환
+      const lastSelectedId = localStorage.getItem('lastSelectedId');
+      if (lastSelectedId && Number(lastSelectedId) === id) {
+        await fetchTodos();
+        setTeamId(null);
+        localStorage.setItem('lastSelectedId', 'null');
+      }
     } catch (error) {
       console.error(error);
     }
@@ -64,8 +103,10 @@ const Sidebar = ({ setTodoList }) => {
     try {
       const response = await todosAPI.getTodos();
       setTodoList(response.data);
+      return response.data;
     } catch (error) {
       console.error(error);
+      throw error;
     }
   };
 
@@ -73,8 +114,10 @@ const Sidebar = ({ setTodoList }) => {
     try {
       const response = await teamTodosAPI.getTeamTodos(id);
       setTodoList(response.data);
+      return response.data;
     } catch (error) {
       console.error(error);
+      throw error;
     }
   };
 
@@ -87,6 +130,7 @@ const Sidebar = ({ setTodoList }) => {
               onClick={() => {
                 fetchTodos();
                 setTeamId(null);
+                localStorage.setItem('lastSelectedId', null);
               }}
             >
               개인 할일 목록
@@ -98,6 +142,7 @@ const Sidebar = ({ setTodoList }) => {
                 onClick={() => {
                   setTeamId(id);
                   fetchTeamTodos(id);
+                  localStorage.setItem('lastSelectedId', id);
                 }}
               >
                 <span>{teamname}의 할일 목록</span>
@@ -127,6 +172,7 @@ const Sidebar = ({ setTodoList }) => {
                         onClick={() => {
                           deleteTeam(id);
                           setShowDropMenu(null);
+                          setTeamId(null);
                         }}
                       >
                         삭제하기

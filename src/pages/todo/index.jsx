@@ -1,5 +1,5 @@
 import './todos.css';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { todosAPI } from '../../api/todos';
 import { teamTodosAPI } from '../../api/teamTodos';
 
@@ -17,19 +17,6 @@ export default function TodoPage() {
   const [editContent, setEditContent] = useState('');
   const [teamId, setTeamId] = useState(null);
   const [isAlertOpen, setIsAlertOpen] = useState(false);
-
-  useEffect(() => {
-    fetchTodos();
-  }, []);
-
-  const fetchTodos = async () => {
-    try {
-      const response = await todosAPI.getTodos();
-      setTodoList(response.data);
-    } catch (error) {
-      console.error(error);
-    }
-  };
 
   const addTodo = async e => {
     e.preventDefault();
@@ -155,7 +142,11 @@ export default function TodoPage() {
   return (
     <>
       <div className="container">
-        <Sidebar setTodoList={setTodoList} />
+        <Sidebar
+          teamId={teamId}
+          setTeamId={setTeamId}
+          setTodoList={setTodoList}
+        />
         <div className="divider" />
         <div className="main-content">
           <div className="input-group">
