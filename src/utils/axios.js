@@ -20,7 +20,6 @@ axiosInstance.interceptors.request.use(
       config.headers.Authorization = `Bearer ${token}`;
     }
 
-    console.log('API 요청:', config.method.toUpperCase(), config.url);
     return config;
   },
   error => {
@@ -31,7 +30,6 @@ axiosInstance.interceptors.request.use(
 
 axiosInstance.interceptors.response.use(
   response => {
-    console.log('API 응답:', response.status, response.config.url);
     return response;
   },
   error => {

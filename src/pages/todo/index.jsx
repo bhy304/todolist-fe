@@ -1,8 +1,6 @@
 import './todos.css';
 import { useState } from 'react';
 import { todosAPI } from '../../api/todos';
-import { teamTodosAPI } from '../../api/teamTodos';
-
 import Button from '../../components/atoms/Button';
 import Textfield from '../../components/atoms/Textfield';
 import Checkfield from '../../components/atoms/Checkfield';
@@ -23,18 +21,11 @@ export default function TodoPage() {
     if (!inputContent.trim()) return;
 
     try {
-      if (teamId) {
-        const response = await teamTodosAPI.createTeamTodo(teamId, {
-          content: inputContent,
-        });
-        setTodoList([...todoList, response.data.todo]);
-      } else {
-        const response = await todosAPI.createTodo({
-          content: inputContent,
-        });
+      const response = await todosAPI.createTodo(teamId, {
+        content: inputContent,
+      });
 
-        setTodoList([...todoList, response.data.todo]);
-      }
+      setTodoList([...todoList, response.data.todo]);
       setInputContent('');
     } catch (error) {
       console.error(error);
@@ -42,35 +33,26 @@ export default function TodoPage() {
   };
 
   const completeTodo = async id => {
+    const todo = todoList.find(todo => todo.id === id);
+    if (!todo) return;
+
+    const updatedTodoList = todoList.map(todo =>
+      todo.id === id
+        ? {
+            ...todo,
+            is_done: !todo.is_done,
+          }
+        : todo
+    );
+    setTodoList(updatedTodoList);
+
     try {
-      if (teamId) {
-        const response = await teamTodosAPI.toggleTeamTodo(id);
-
-        setTodoList(
-          todoList.map(todo =>
-            todo.id === id
-              ? {
-                  ...todo,
-                  is_done: response.data.todo.is_done,
-                }
-              : todo
-          )
-        );
-      } else {
-        const response = await todosAPI.toggleTodo(id);
-
-        setTodoList(
-          todoList.map(todo =>
-            todo.id === id
-              ? {
-                  ...todo,
-                  is_done: response.data.todo.is_done,
-                }
-              : todo
-          )
-        );
-      }
+      await todosAPI.updateTodo(id, teamId, {
+        content: todo.content,
+        is_done: !todo.is_done,
+      });
     } catch (error) {
+      setTodoList(todoList);
       console.error(error);
     }
   };
@@ -80,35 +62,30 @@ export default function TodoPage() {
     setEditContent(todo.content);
   };
 
-  const saveEdit = async () => {
+  const saveEdit = async todo => {
     if (!editContent.trim()) return;
 
+    const updatedTodoList = todoList.map(t =>
+      t.id === editingId
+        ? {
+            ...t,
+            content: editContent,
+          }
+        : t
+    );
+    setTodoList(updatedTodoList);
+    setEditingId(null);
+    setEditContent('');
+
     try {
-      if (teamId) {
-        const response = await teamTodosAPI.updateTeamTodo(editingId, {
-          content: editContent,
-        });
-
-        setTodoList(
-          todoList.map(todo =>
-            todo.id === editingId ? response.data.todo : todo
-          )
-        );
-      } else {
-        const response = await todosAPI.updateTodo(editingId, {
-          content: editContent,
-        });
-
-        setTodoList(
-          todoList.map(todo =>
-            todo.id === editingId ? response.data.todo : todo
-          )
-        );
-      }
-
-      setEditingId(null);
-      setEditContent('');
+      await todosAPI.updateTodo(editingId, teamId, {
+        content: editContent,
+        is_done: todo.is_done,
+      });
     } catch (error) {
+      setTodoList(todoList);
+      setEditingId(todo.id);
+      setEditContent(todo.content);
       console.error(error);
     }
   };
@@ -122,11 +99,7 @@ export default function TodoPage() {
     try {
       setIsAlertOpen(true);
 
-      if (teamId) {
-        await teamTodosAPI.deleteTeamTodo(id);
-      } else {
-        await todosAPI.deleteTodo(id);
-      }
+      await todosAPI.deleteTodo(id);
 
       setTodoList(todoList.filter(todo => todo.id !== id));
 
@@ -178,7 +151,10 @@ export default function TodoPage() {
                           autoFocus
                         />
                         <div className="button-group">
-                          <Button variant="PRIMARY" onClick={saveEdit}>
+                          <Button
+                            variant="PRIMARY"
+                            onClick={() => saveEdit(todo)}
+                          >
                             완료
                           </Button>
                           <Button variant="GHOST" onClick={cancelEdit}>
@@ -191,7 +167,9 @@ export default function TodoPage() {
                         <Checkfield
                           id={`todo-${todo.id}`}
                           checked={todo.is_done}
-                          onChange={() => completeTodo(todo.id)}
+                          onChange={() =>
+                            completeTodo(todo.id, { is_done: todo.is_done })
+                          }
                           label={todo.content}
                         />
                         <div className="button-group">

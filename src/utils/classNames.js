@@ -14,16 +14,13 @@
 export const getClassName = (baseClassName, values, maps) => {
   const classNames = [baseClassName];
 
-  // 값이 없으면 baseClassName만 반환
   if (!values || !maps) {
     return baseClassName;
   }
 
-  // 단일 값인 경우 배열로 변환
   const valueArray = Array.isArray(values) ? values : [values];
   const mapArray = Array.isArray(maps) ? maps : [maps];
 
-  // 각 값에 대해 매핑된 클래스명 추가
   valueArray.forEach((value, index) => {
     const map = mapArray[index];
     if (value && map && map[value]) {

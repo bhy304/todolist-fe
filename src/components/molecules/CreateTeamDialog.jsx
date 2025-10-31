@@ -20,7 +20,7 @@ const CreateTeamDialog = ({
 
       setTeamname('');
       setIsCreateTeamOpen(false);
-      onConfirm?.(); // 팀 생성 성공 시 onConfirm 콜백 호출
+      onConfirm?.();
     } catch (error) {
       console.error(error);
     }

@@ -30,7 +30,7 @@ const LoginPage = () => {
 
         cookies.set('token', token, {
           path: '/',
-          // maxAge: 3600, // 1시간
+          maxAge: 3600,
         });
 
         localStorage.setItem('user', JSON.stringify(user));

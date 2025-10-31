@@ -1,6 +1,5 @@
 import './common.css';
 import { useState } from 'react';
-// 공통 컴포넌트
 import Button from '../../components/atoms/Button';
 import Textfield from '../../components/atoms/Textfield';
 import Checkfield from '../../components/atoms/Checkfield';
@@ -48,6 +47,8 @@ const Common = () => {
             삭제
           </Button>
           <Button variant="DANGER">삭제</Button>
+          <Button variant="ELLIPSIS" />
+          <Button variant="DELETE" onClick={() => alert('삭제')} />
         </div>
         <div className="common">
           <Button variant="PRIMARY" size="FULL">
@@ -97,7 +98,6 @@ const Common = () => {
       {isAlertOpen && (
         <AlertDialog
           isOpen={isAlertOpen}
-          title="정말 삭제하시겠습니까?"
           onConfirm={confirmDelete}
           onCancel={() => setIsAlertOpen(false)}
         />
@@ -105,7 +105,6 @@ const Common = () => {
       {isCreateTeamOpen && (
         <CreateTeamDialog
           isOpen={isCreateTeamOpen}
-          title="정말 삭제하시겠습니까?"
           onConfirm={confirmDelete}
           onCancel={() => setIsCreateTeamOpen(false)}
         />
@@ -113,7 +112,6 @@ const Common = () => {
       {isInviteMemberOpen && (
         <InviteTeamMemberDialog
           isOpen={isInviteMemberOpen}
-          title="정말 삭제하시겠습니까?"
           onConfirm={confirmDelete}
           onCancel={() => setIsInviteMemberOpen(false)}
         />
