@@ -17,7 +17,9 @@ const BUTTON_SIZE = {
   FULL: 'full',
 };
 
-const Button = ({ children, type, variant, size, onClick }) => {
+const Button = props => {
+  const { children, size, variant } = props;
+
   const className = getClassName(
     'button',
     [variant, size],
@@ -25,7 +27,7 @@ const Button = ({ children, type, variant, size, onClick }) => {
   );
 
   return (
-    <button type={type} className={className} onClick={onClick}>
+    <button {...props} className={className}>
       {children}
     </button>
   );

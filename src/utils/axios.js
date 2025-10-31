@@ -4,25 +4,22 @@ import Cookies from 'universal-cookie';
 const BASE_URL = process.env.REACT_APP_BASE_URL;
 const cookies = new Cookies();
 
-// axios 인스턴스 설정
 const axiosInstance = axios.create({
   baseURL: BASE_URL,
   headers: {
     'Content-Type': 'application/json',
   },
-  withCredentials: true, // 쿠키를 주고받기 위해 필요
+  withCredentials: true,
 });
 
-//  요청 인터셉터
 axiosInstance.interceptors.request.use(
   config => {
     const token = cookies.get('token');
 
     if (token) {
-      config.headers.Authorization = `Bearer ${token}`; // 토큰 자동 추가
+      config.headers.Authorization = `Bearer ${token}`;
     }
 
-    console.log('API 요청:', config.method.toUpperCase(), config.url);
     return config;
   },
   error => {
@@ -31,10 +28,8 @@ axiosInstance.interceptors.request.use(
   }
 );
 
-//  응답 인터셉터
 axiosInstance.interceptors.response.use(
   response => {
-    console.log('API 응답:', response.status, response.config.url);
     return response;
   },
   error => {
@@ -46,7 +41,7 @@ axiosInstance.interceptors.response.use(
     }
 
     const { status, data } = error.response;
-    const errorCode = data?.errorCode; // code -> errorCode로 통일
+    const errorCode = data?.errorCode;
 
     switch (status) {
       case 401:
@@ -66,7 +61,6 @@ axiosInstance.interceptors.response.use(
           localStorage.removeItem('user');
           window.location.href = '/';
         } else if (errorCode === 'INVALID_CREDENTIALS') {
-          // 로그인 페이지에서 처리
           return Promise.reject(error);
         }
         break;
@@ -77,7 +71,6 @@ axiosInstance.interceptors.response.use(
         alert('요청하신 리소스를 찾을 수 없습니다.');
         break;
       case 409:
-        // 중복 에러는 각 페이지에서 처리
         return Promise.reject(error);
       case 500:
         alert('서버 오류가 발생했습니다. 잠시 후 다시 시도해주세요.');

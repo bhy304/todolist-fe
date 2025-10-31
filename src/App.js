@@ -36,7 +36,9 @@ function App() {
               </ProtectedRoute>
             }
           />
-          <Route path="/_common" element={<Common />} />
+          {process.env.NODE_ENV !== 'production' && (
+            <Route path="/common" element={<Common />} />
+          )}
         </Routes>
       </div>
     </Router>

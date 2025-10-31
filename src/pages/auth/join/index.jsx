@@ -1,10 +1,9 @@
+import '../auth.css';
 import { useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
-import '../auth.css';
 import { usersAPI } from '../../../api/users';
-
-import Textfield from '../../../components/atoms/Textfield';
 import Button from '../../../components/atoms/Button';
+import Textfield from '../../../components/atoms/Textfield';
 
 const JoinPage = () => {
   const navigate = useNavigate();
@@ -15,16 +14,15 @@ const JoinPage = () => {
     setError,
     formState: { errors },
   } = useForm({
-    mode: 'onChange', // 실시간 검증
+    mode: 'onChange',
   });
 
   const onSubmit = async formData => {
     const { username, password } = formData;
 
     try {
-      const result = await usersAPI.join({ username, password });
+      await usersAPI.join({ username, password });
 
-      // 회원가입 성공 시 로그인 페이지로 이동
       navigate('/');
     } catch (error) {
       console.error(error);

@@ -1,9 +1,8 @@
+import '../auth.css';
+import Cookies from 'universal-cookie';
 import { useForm } from 'react-hook-form';
 import { Link, useNavigate } from 'react-router-dom';
-import Cookies from 'universal-cookie';
-import '../auth.css';
 import { usersAPI } from '../../../api/users';
-
 import Button from '../../../components/atoms/Button';
 import Textfield from '../../../components/atoms/Textfield';
 
@@ -29,13 +28,11 @@ const LoginPage = () => {
       if (response.data.success) {
         const { token, user } = response.data;
 
-        // Cookie에 토큰 저장
         cookies.set('token', token, {
           path: '/',
-          // maxAge: 3600, // 1시간
+          maxAge: 3600,
         });
 
-        // 사용자 정보는 localStorage에 저장
         localStorage.setItem('user', JSON.stringify(user));
 
         navigate('/todo');
@@ -43,7 +40,6 @@ const LoginPage = () => {
     } catch (error) {
       console.error(error);
 
-      // 401 에러 처리 react-hook-form 에러로 추가
       if (error.response?.data.errorCode === 'INVALID_CREDENTIALS') {
         setError('root.serverError', {
           type: 'manual',

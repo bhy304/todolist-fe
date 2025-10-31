@@ -1,115 +1,31 @@
-import { useState, useEffect } from 'react';
-import { todosAPI } from '../../api/todos';
-import { usersAPI } from '../../api/users';
-import { teamsAPI } from '../../api/teams';
-import { teamTodosAPI } from '../../api/teamTodos';
 import './todos.css';
-
+import { useState } from 'react';
+import { todosAPI } from '../../api/todos';
 import Button from '../../components/atoms/Button';
 import Textfield from '../../components/atoms/Textfield';
 import Checkfield from '../../components/atoms/Checkfield';
+import Sidebar from '../../components/organisms/Sidebar';
 import AlertDialog from '../../components/molecules/AlertDialog';
-import CreateTeamDialog from '../../components/molecules/CreateTeamDialog';
-import InviteTeamMemberDialog from '../../components/molecules/InviteTeamMemberDialog';
 
 export default function TodoPage() {
   const [deletedId, setDeletedId] = useState(null);
   const [todoList, setTodoList] = useState([]);
-  const [teamList, setTeamList] = useState([]);
   const [inputContent, setInputContent] = useState('');
   const [editingId, setEditingId] = useState(null);
   const [editContent, setEditContent] = useState('');
-  const [showDropMenu, setShowDropMenu] = useState(false);
-  const [showUserMenu, setShowUserMenu] = useState(false);
   const [teamId, setTeamId] = useState(null);
-  // 다이얼로그 상태
   const [isAlertOpen, setIsAlertOpen] = useState(false);
-  const [isCreateTeamOpen, setIsCreateTeamOpen] = useState(false);
-  const [isInviteMemberOpen, setIsInviteMemberOpen] = useState(false);
-
-  const user = localStorage.getItem('user');
-  const username = user ? JSON.parse(user).username : '';
-
-  // 외부 클릭 감지를 위한 useEffect 추가
-  useEffect(() => {
-    const handleClickOutside = event => {
-      // 메뉴가 열려있을 때만 체크
-      if (showDropMenu || showUserMenu) {
-        // 클릭한 요소가 메뉴나 드롭메뉴 버튼이 아닌 경우
-        const isDropMenuButton = event.target.closest('.dropmenu-button');
-        const isMenu = event.target.closest('.menu');
-        if (!isDropMenuButton && !isMenu) {
-          setShowDropMenu(false);
-          setShowUserMenu(false);
-        }
-      }
-    };
-    // document에 클릭 이벤트 리스너 추가
-    document.addEventListener('mousedown', handleClickOutside);
-    // cleanup: 컴포넌트 언마운트 시 이벤트 리스너 제거
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, [showDropMenu, showUserMenu]);
-
-  useEffect(() => {
-    fetchTodos();
-    fetchTeams();
-  }, []);
-
-  const fetchTodos = async () => {
-    try {
-      const response = await todosAPI.getTodos();
-      setTodoList(response.data);
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
-  const fetchTeams = async () => {
-    try {
-      const response = await teamsAPI.getTeams();
-      setTeamList(response.data.data);
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
-  const fetchTeamTodos = async id => {
-    try {
-      const response = await teamTodosAPI.getTeamTodos(id);
-      setTodoList(response.data);
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
-  const deleteTeam = async id => {
-    try {
-      await teamsAPI.deleteTeam(id);
-      fetchTeams();
-    } catch (error) {
-      console.error(error);
-    }
-  };
 
   const addTodo = async e => {
     e.preventDefault();
     if (!inputContent.trim()) return;
 
     try {
-      if (teamId) {
-        const response = await teamTodosAPI.createTeamTodo(teamId, {
-          content: inputContent,
-        });
-        setTodoList([...todoList, response.data.todo]);
-      } else {
-        const response = await todosAPI.createTodo({
-          content: inputContent,
-        });
+      const response = await todosAPI.createTodo(teamId, {
+        content: inputContent,
+      });
 
-        setTodoList([...todoList, response.data.todo]);
-      }
+      setTodoList([...todoList, response.data.todo]);
       setInputContent('');
     } catch (error) {
       console.error(error);
@@ -117,75 +33,59 @@ export default function TodoPage() {
   };
 
   const completeTodo = async id => {
+    const todo = todoList.find(todo => todo.id === id);
+    if (!todo) return;
+
+    const updatedTodoList = todoList.map(todo =>
+      todo.id === id
+        ? {
+            ...todo,
+            is_done: !todo.is_done,
+          }
+        : todo
+    );
+    setTodoList(updatedTodoList);
+
     try {
-      if (teamId) {
-        const response = await teamTodosAPI.toggleTeamTodo(id);
-
-        setTodoList(
-          todoList.map(todo =>
-            todo.id === id
-              ? {
-                  ...todo,
-                  is_done: response.data.todo.is_done,
-                }
-              : todo
-          )
-        );
-      } else {
-        const response = await todosAPI.toggleTodo(id);
-
-        setTodoList(
-          todoList.map(todo =>
-            todo.id === id
-              ? {
-                  ...todo,
-                  is_done: response.data.todo.is_done,
-                }
-              : todo
-          )
-        );
-      }
+      await todosAPI.updateTodo(id, teamId, {
+        content: todo.content,
+        is_done: !todo.is_done,
+      });
     } catch (error) {
+      setTodoList(todoList);
       console.error(error);
     }
   };
 
-  // 수정 시작
   const startEdit = todo => {
     setEditingId(todo.id);
     setEditContent(todo.content);
   };
 
-  // 수정 완료 (DB 업데이트)
-  const saveEdit = async () => {
+  const saveEdit = async todo => {
     if (!editContent.trim()) return;
 
+    const updatedTodoList = todoList.map(t =>
+      t.id === editingId
+        ? {
+            ...t,
+            content: editContent,
+          }
+        : t
+    );
+    setTodoList(updatedTodoList);
+    setEditingId(null);
+    setEditContent('');
+
     try {
-      if (teamId) {
-        const response = await teamTodosAPI.updateTeamTodo(editingId, {
-          content: editContent,
-        });
-
-        setTodoList(
-          todoList.map(todo =>
-            todo.id === editingId ? response.data.todo : todo
-          )
-        );
-      } else {
-        const response = await todosAPI.updateTodo(editingId, {
-          content: editContent,
-        });
-
-        setTodoList(
-          todoList.map(todo =>
-            todo.id === editingId ? response.data.todo : todo
-          )
-        );
-      }
-
-      setEditingId(null);
-      setEditContent('');
+      await todosAPI.updateTodo(editingId, teamId, {
+        content: editContent,
+        is_done: todo.is_done,
+      });
     } catch (error) {
+      setTodoList(todoList);
+      setEditingId(todo.id);
+      setEditContent(todo.content);
       console.error(error);
     }
   };
@@ -199,11 +99,7 @@ export default function TodoPage() {
     try {
       setIsAlertOpen(true);
 
-      if (teamId) {
-        await teamTodosAPI.deleteTeamTodo(id);
-      } else {
-        await todosAPI.deleteTodo(id);
-      }
+      await todosAPI.deleteTodo(id);
 
       setTodoList(todoList.filter(todo => todo.id !== id));
 
@@ -213,101 +109,18 @@ export default function TodoPage() {
     }
   };
 
-  const activeTodos = todoList.filter(todo => !todo.is_done); // 미완료 할일
-  const completedTodos = todoList.filter(todo => todo.is_done); // 완료된 할일
+  const activeTodos = todoList.filter(todo => !todo.is_done);
+  const completedTodos = todoList.filter(todo => todo.is_done);
 
   return (
     <>
       <div className="container">
-        <aside className="sidebar">
-          <nav className="sidebar-nav">
-            <ul>
-              <li
-                onClick={() => {
-                  fetchTodos();
-                  setTeamId(null);
-                }}
-              >
-                개인 할일 목록
-              </li>
-              {/* 팀 할일 목록 */}
-              {teamList.map(({ teamname, id }) => (
-                <li
-                  key={id}
-                  className="nav-item"
-                  onClick={() => {
-                    fetchTeamTodos(id);
-                    setTeamId(id);
-                  }}
-                >
-                  <span>{teamname}의 할일 목록</span>
-                  <div className="dropmenu">
-                    <button
-                      className="dropmenu-button"
-                      onClick={e => {
-                        e.stopPropagation(); // 부모 li의 onClick 실행 방지
-                        setShowDropMenu(showDropMenu === id ? null : id);
-                      }}
-                    >
-                      <img src="/ellipsis.svg" alt="dropmenu" />
-                    </button>
-                    {showDropMenu === id && (
-                      <div className="menu dropdown-menu">
-                        <button
-                          className="invite"
-                          onClick={() => {
-                            setIsInviteMemberOpen(true);
-                            setShowDropMenu(null);
-                          }}
-                        >
-                          초대하기
-                        </button>
-                        <button
-                          className="delete"
-                          onClick={() => {
-                            deleteTeam(id);
-                            setShowDropMenu(null);
-                          }}
-                        >
-                          삭제하기
-                        </button>
-                      </div>
-                    )}
-                  </div>
-                </li>
-              ))}
-            </ul>
-            <Button
-              variant="GHOST"
-              size="FULL"
-              onClick={() => setIsCreateTeamOpen(true)}
-            >
-              팀 만들기
-            </Button>
-          </nav>
-          {/* 사용자 정보 (하단) */}
-          <div className="sidebar-footer">
-            <div className="user-info">
-              <span>{username}</span>
-              <button
-                className="dropmenu-button"
-                onClick={() => setShowUserMenu(!showUserMenu)}
-              >
-                <img src="/ellipsis.svg" alt="dropmenu" />
-              </button>
-              {showUserMenu && (
-                <div className="menu user-menu">
-                  <button className="" onClick={usersAPI.logout}>
-                    로그아웃
-                  </button>
-                </div>
-              )}
-            </div>
-          </div>
-        </aside>
-
+        <Sidebar
+          teamId={teamId}
+          setTeamId={setTeamId}
+          setTodoList={setTodoList}
+        />
         <div className="divider" />
-
         <div className="main-content">
           <div className="input-group">
             <Textfield
@@ -338,7 +151,10 @@ export default function TodoPage() {
                           autoFocus
                         />
                         <div className="button-group">
-                          <Button variant="PRIMARY" onClick={saveEdit}>
+                          <Button
+                            variant="PRIMARY"
+                            onClick={() => saveEdit(todo)}
+                          >
                             완료
                           </Button>
                           <Button variant="GHOST" onClick={cancelEdit}>
@@ -351,7 +167,9 @@ export default function TodoPage() {
                         <Checkfield
                           id={`todo-${todo.id}`}
                           checked={todo.is_done}
-                          onChange={() => completeTodo(todo.id)}
+                          onChange={() =>
+                            completeTodo(todo.id, { is_done: todo.is_done })
+                          }
                           label={todo.content}
                         />
                         <div className="button-group">
@@ -378,7 +196,6 @@ export default function TodoPage() {
               </ul>
             )}
           </section>
-
           <section className="done-section">
             <h2>DONE</h2>
             {completedTodos.length === 0 ? (
@@ -412,25 +229,8 @@ export default function TodoPage() {
       {isAlertOpen && (
         <AlertDialog
           isOpen={isAlertOpen}
-          title="정말 삭제하시겠습니까?"
           onConfirm={() => deleteTodo(deletedId)}
           onCancel={() => setIsAlertOpen(false)}
-        />
-      )}
-      {isCreateTeamOpen && (
-        <CreateTeamDialog
-          isOpen={isCreateTeamOpen}
-          setIsCreateTeamOpen={setIsCreateTeamOpen}
-          onConfirm={fetchTeams} // 팀 생성 성공 시 팀 목록 새로고침
-          onCancel={() => setIsCreateTeamOpen(false)}
-        />
-      )}
-      {isInviteMemberOpen && (
-        <InviteTeamMemberDialog
-          isOpen={isInviteMemberOpen}
-          teamId={teamId}
-          onConfirm={() => {}}
-          onCancel={() => setIsInviteMemberOpen(false)}
         />
       )}
     </>
